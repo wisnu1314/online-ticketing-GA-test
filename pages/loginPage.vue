@@ -1,13 +1,13 @@
 <template>
-    <EventLoginRegister />
+    <EventLogin />
   </template>
 
 <script>
-import EventLoginRegister from '~/components/EventLoginRegister.vue';
+import EventLogin from '~/components/EventLogin.vue';
   
 export default {
     components: {
-        EventLoginRegister
+        EventLogin
     }
   }
 </script>
