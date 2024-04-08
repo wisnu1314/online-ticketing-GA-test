@@ -2,8 +2,8 @@
   <div class="event">
     <img src="/landingjumbotron.png" style="width:100%; max-height: 45vh;"/>
     <p class="mt-4"><strong>Sabtu, 14 Oktober 2023</strong></p>
-    <div class="row">
-      <div class="col-8 pr-5">
+    <div class="d-flex event_desc">
+      <div class="col_desc">
         <div>
           <p class="title">Atma Asta 2023 : Reinerva</p>
           <p><strong>"Step to liberty, Leap into victory". REINERVA is an encouragement for people to reach peace and liberty.</strong></p>
@@ -48,7 +48,7 @@
           <p class="mt-3">SMA Negeri 8 Bandung, merupakan salah satu Sekolah Menengah Atas Negeri di Kota Bandung, beralamat di Jl. Solontongan No.3, Kelurahan Turangga, Kecamatan Lengkong, Kota Bandung, Jawa Barat</p>
         </div>
       </div>
-      <div class="col-4 event_price shadow-lg p-4 mb-5 bg-white rounded">
+      <div class="event_price">
         <p class="h5 mb-4">Rp0 - Rp1.000.000</p>
         <button>Pesan Tiket</button>
       </div>
@@ -71,6 +71,7 @@ export default {
 .event {
   padding-left: 15%;
   padding-right: 15%;
+  padding-bottom: 30px;
 }
 
 .event p {
@@ -121,6 +122,10 @@ export default {
 
 .event_price {
   height: max-content;
+  width: 100%;
+  padding: 25px !important;
+  box-shadow: 7px 7px 7px 7px rgba(0, 0, 0, 0.116);
+  border-radius: 20px;
 }
 
 .btn_tags {
@@ -151,5 +156,24 @@ export default {
 .org_detail {
   font-size: small;
   color: grey;
+}
+
+.col_desc {
+  max-width: 70%;
+  padding-right: 40px;
+}
+
+@media screen and (max-width: 1000px) {
+  .event_desc {
+    display: block !important;
+  }
+  .col_desc {
+    max-width: 100% !important;
+    text-align: left  !important;
+    padding-right: 0 !important;
+  }
+  .event_price {
+    margin-top: 30px;
+  }
 }
 </style>

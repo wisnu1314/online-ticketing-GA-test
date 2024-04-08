@@ -105,7 +105,7 @@
                 id="description"
                 v-model="form.description"
                 placeholder="Deskripsi"
-                rows="6" 
+                rows="6"
                 required
               ></b-form-textarea>
             </b-form-group>
@@ -115,26 +115,26 @@
           <b-button class="BackButton" size="sm" @click="showSecondPart = false">Kembali</b-button>
           <b-button type="submit" class="RegisterButton" size="sm" @click="registerOrganizer">Daftar</b-button>
         </div>
-        
+
         <div class="FormFooter">
           <div>Sudah punya akun?</div>
           <b-link class="LoginLink" href="/loginPage">Masuk sekarang!</b-link>
         </div>
       </div>
     </div>
-    <WebFooter/>
+    <!-- <WebFooter/> -->
   </div>
 </template>
 
 <script>
 // import bcrypt from 'bcryptjs';
-import WebFooter from './WebFooter.vue';
+// import WebFooter from './WebFooter.vue';
 // import WebNavbar from './WebNavbar.vue';
 
 export default {
   name: 'EventRegisterOrganizer',
   components: {
-    WebFooter,
+    // WebFooter,
     // WebNavbar,
   },
   data() {
@@ -172,8 +172,8 @@ export default {
 .MainBox{
   display: flex;
   width: 100%;
-  height: 100vh;
-  background-color: #0e9d6e;
+  /* height: 100vh; */
+  /* background-color: #0e9d6e; */
   justify-content: center;
   align-content: center;
   flex-direction: column;
@@ -183,7 +183,7 @@ export default {
   width: 100%;
   height: 66vh;
   background-image: url('/backgroundimg.png');
-  background-size: cover; 
+  background-size: cover;
   background-position: center;
   justify-content: flex-end;
   padding-right: 5%;
@@ -205,15 +205,15 @@ export default {
   min-height: 30vh;
   height: auto;
   overflow-y: auto;
-  
+
   background-color: white;
   padding: 20px;
 }
 
 .b-form-group {
-margin-bottom: 0; 
-padding-top: 0; 
-padding-bottom: 0; 
+margin-bottom: 0;
+padding-top: 0;
+padding-bottom: 0;
 }
 .b-form-input {
 overflow: hidden;
