@@ -1,6 +1,6 @@
 <template>
     <div class="Footer">
-      <div class="LeftFooter">  
+      <div class="LeftFooter">
         <div class="LeftFooterBrand">Teecket</div>
         <div class="LeftFooterDesc">Platform tiket dan penemuan lengkap yang dipercaya oleh jutaan penyelenggara dan peserta di seluruh dunia</div>
       </div>
@@ -29,7 +29,7 @@
       </div>
     </div>
   </template>
-  
+
   <script>
   import { BootstrapVueIcons } from 'bootstrap-vue'
   import 'bootstrap-vue/dist/bootstrap-vue-icons.min.css'
@@ -47,7 +47,7 @@
   };
   ;
   </script>
-  
+
   <style scoped>
 .Footer{
   display: flex;
@@ -56,6 +56,7 @@
   background-color: #035037;
   justify-content: space-around;
   align-items: center;
+  margin-top: 30px;
 }
 .LeftFooter{
   display: flex;
