@@ -1,23 +1,7 @@
+<!-- eslint-disable no-console -->
 <template>
   <div class="MainBox">
-    <b-navbar class="Navbar" toggleable="lg" type="dark">
-      <b-navbar-brand href="#">Teecket</b-navbar-brand>
-      <b-form-group class="SearchBarContainer">
-        <b-input-group>
-          <b-form-input
-            v-model="searchQuery"
-            placeholder="Cari sesuatu..."
-            type="text"
-            class="SearchBar"
-          />
-        </b-input-group>
-      </b-form-group>
-      <b-navbar-nav class="RightNavigation">
-        <b-nav-item href="#">Cari Event</b-nav-item>
-        <b-nav-item href="/registerOrganizerPage">Menjadi Organizer</b-nav-item>
-        <b-button class="NavButton" href="/loginPage">Masuk</b-button>
-      </b-navbar-nav>
-    </b-navbar>
+    <!-- <WebNavbar :logged-in.sync="isLoggedIn" :user-type.sync="userType" :search-query.sync="searchQuery" /> -->
     <div class="MiddleBox">
       <div class="FormBox">
         <div class="FormTitle">Masuk</div>
@@ -64,21 +48,24 @@
 <script>
 import bcrypt from 'bcryptjs'
 import WebFooter from './WebFooter.vue';
+// import WebNavbar from './WebNavbar.vue';
 
 export default {
-  name: 'EventLoginRegister',
+  name: 'EventLogin',
   components: {
     WebFooter,
+    // WebNavbar,
   },
   data() {
     return {
+      isLoggedIn: true,
+      userType: 'user',
       searchQuery: '',
       form: {
         email: '',
         password: '',
       },
       showPassword: false,
-      mediaIcons: ['facebook', 'instagram', 'twitter'],
     };
   },
   methods: {
@@ -93,6 +80,11 @@ export default {
       // Handle login logic, e.g., call an API
       const hashedPassword = await bcrypt.hash(this.form.password, 10);
       this.$store.dispatch('login', { email: this.form.email, password: hashedPassword });
+    },
+    performSearch() {
+      // eslint-disable-next-line no-console
+      console.log('Search query:', this.searchQuery);
+      // Implement search functionality
     },
   },
 }
@@ -116,18 +108,6 @@ body {
   font-size: 1rem;
 }
 
-/* Navbar */
-.Navbar {
-  display: flex;
-  height: 8vh;
-  align-items: center;
-  justify-content: center;
-  background-color: #0e9d6e;
-  gap: 100px;
-  color: white;
-}
-
-/* Middle content */
 .MiddleBox {
   display: flex;
   width: 100%;
@@ -138,44 +118,6 @@ body {
   justify-content: flex-end;
   padding-right: 5%;
   align-content: center;
-}
-
-/* Search bar */
-.SearchBarContainer {
-  display: flex;
-  align-items: center;
-  margin-top: 1rem;
-  border-radius: 5px;
-  background-color: white;
-}
-
-.SearchBar {
-  display: block;
-  width: 60vh;
-  padding: 9px 4px 9px 40px;
-  border-radius: 5px;
-  background: transparent url("/search.svg") no-repeat 13px;
-}
-
-/* Right navigation */
-.RightNavigation {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  font-size: 1rem;
-}
-
-.NavButton {
-  border-radius: 18px;
-  background-color: white;
-  color: black;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 10vh;
-  height: 40px;
-  font-size: 1rem;
 }
 
 /* Form */
@@ -234,9 +176,4 @@ body {
   font-size: 14px;
 }
 
-@media screen and (max-width: 768px) {
-  .Navbar {
-    justify-content: space-between; 
-  }
-}
 </style>

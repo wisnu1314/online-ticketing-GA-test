@@ -1,43 +1,26 @@
 <template>
     <div class="MainBox">
-      <b-navbar class="Navbar" toggleable="lg" type="dark">
-        <b-navbar-brand href="#">Teecket</b-navbar-brand>
-        <b-form-group class="SearchBarContainer">
-          <b-input-group>
-            <b-form-input
-              v-model="searchQuery"
-              placeholder="Cari sesuatu..."
-              type="text"
-              class="SearchBar"
-            />
-          </b-input-group>
-        </b-form-group>
-        <b-navbar-nav class="RightNavigation">
-          <b-nav-item href="#">Cari Event</b-nav-item>
-          <b-nav-item href="/registerOrganizerPage">Menjadi Organizer</b-nav-item>
-          <b-button class="NavButton" href="/loginPage">Masuk</b-button>
-        </b-navbar-nav>
-      </b-navbar>
+      <!-- <WebNavbar :logged-in.sync="isLoggedIn" :user-type.sync="userType" :search-query.sync="searchQuery" /> -->
       <div class="MiddleBox">
         <div class="FormBox">
           <div class="FormTitle">Daftar</div>
           <form @submit.prevent="register">
-            <b-form-group label="First Name" label-for="firstName" label-size="sm">
+            <b-form-group label="Nama Depan" label-for="firstName" label-size="sm">
               <b-form-input
                 id="firstName"
                 v-model="form.firstName"
                 type="text"
-                placeholder="First Name"
+                placeholder="Nama Depan"
                 size="sm"
                 maxlength="32"
               ></b-form-input>
             </b-form-group>
-            <b-form-group label="Last Name" label-for="lastName" label-size="sm">
+            <b-form-group label="Nama Belakang" label-for="lastName" label-size="sm">
               <b-form-input
                 id="lastName"
                 v-model="form.lastName"
                 type="text"
-                placeholder="Last Name"
+                placeholder="Nama Belakang"
                 size="sm"
                 maxlength="32"
               ></b-form-input>
@@ -62,8 +45,8 @@
                 maxlength="32"
               ></b-form-input>
             </b-form-group>
-            <b-button key="register-button" type="submit" class="RegisterButton" size="sm">Daftar</b-button>
-            <div key="register-footer" class="FormFooter">
+            <b-button type="submit" class="RegisterButton" size="sm">Daftar</b-button>
+            <div class="FormFooter">
               <div>Sudah punya akun?</div>
               <b-link class="LoginLink" href="/loginPage">Masuk sekarang!</b-link>
             </div>
@@ -75,16 +58,20 @@
   </template>
   
   <script>
-  import bcrypt from 'bcryptjs';
+  // import bcrypt from 'bcryptjs';
   import WebFooter from './WebFooter.vue';
+  // import WebNavbar from './WebNavbar.vue';
   
   export default {
-    name: 'EventRegister',
+    name: 'EventRegisterUser',
     components: {
       WebFooter,
+      // WebNavbar,
     },
     data() {
       return {
+        isLoggedIn: false,
+        userType: '',
         searchQuery: '',
         form: {
           firstName: '',
@@ -95,16 +82,15 @@
       };
     },
     methods: {
-      async register() {
-        // Handle registration logic, e.g., call an API
-        const hashedPassword = await bcrypt.hash(this.form.password, 10);
-        this.$store.dispatch('register', {
-          firstName: this.form.firstName,
-          lastName: this.form.lastName,
-          email: this.form.email,
-          password: hashedPassword,
-        });
-      },
+      register() {
+      // eslint-disable-next-line no-console
+      console.log('Organizer registration form data:', this.form);
+    },
+      performSearch() {
+      // eslint-disable-next-line no-console
+        console.log('Search query:', this.searchQuery);
+      // Implement search functionality
+    },
     },
   };
   </script>
@@ -118,15 +104,6 @@
     align-content: center;
     flex-direction: column;
   }
-  .Navbar{
-    display: flex;
-    height: 8vh;
-    align-items: center;
-    justify-content: center;
-    background-color: #0E9D6E;
-    gap: 100px;
-    color:white;
-  }
   .MiddleBox{
     display: flex;
     width: 100%;
@@ -137,41 +114,7 @@
     justify-content: flex-end;
     padding-right: 5%;
     padding-left: 5%;
-    align-items: center; /* Vertically center the contents */
-  }
-  .SearchBarContainer{
-    display: flex;
     align-items: center;
-    margin-top: 1rem;
-    border-radius: 5px;
-    background-color: white;
-  }
-  .SearchBar{
-    display: block;
-    width:60vh;
-    padding: 9px 4px 9px 40px;
-    border-radius: 5px;
-    background: transparent url("/search.svg") no-repeat 13px;
-  
-  }
-  .RightNavigation{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap:10px;
-    font-size: 16px;
-    
-  }
-  .NavButton{
-    border-radius: 18px;
-    background-color: white;
-    color: black;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width:10vh;
-    height: 40px;
-    font-size: 16px;
   }
   .b-nav-items{
     color: white;
@@ -194,9 +137,9 @@
   }
   
 .b-form-group {
-  margin-bottom: 0; /* Remove bottom margin */
-  padding-top: 0; /* Remove top padding */
-  padding-bottom: 0; /* Remove bottom padding */
+  margin-bottom: 0; 
+  padding-top: 0; 
+  padding-bottom: 0; 
 }
 .b-form-input {
   overflow: hidden;

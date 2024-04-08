@@ -1,6 +1,6 @@
 <template>
     <EventRegisterUser/>
-  </template>
+</template>
 
 <script>
 import EventRegisterUser from '~/components/EventRegisterUser.vue';

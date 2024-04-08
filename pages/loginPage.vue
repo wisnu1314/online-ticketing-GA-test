@@ -1,6 +1,6 @@
 <template>
     <EventLogin />
-  </template>
+</template>
 
 <script>
 import EventLogin from '~/components/EventLogin.vue';
