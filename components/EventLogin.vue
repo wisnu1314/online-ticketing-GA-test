@@ -25,9 +25,9 @@
                 maxlength="32"
               ></b-form-input>
               <b-input-group-append style="position: absolute; right: 0; top: 0; bottom: 0; display: flex; align-items: center; padding-right: 10px;">
-                <b-icon 
-                  :icon="showPassword ? 'eye-slash-fill' : 'eye-fill'" 
-                  style="cursor: pointer; color: black;" 
+                <b-icon
+                  :icon="showPassword ? 'eye-slash-fill' : 'eye-fill'"
+                  style="cursor: pointer; color: black;"
                   @click="togglePassword">
                 </b-icon>
               </b-input-group-append>
@@ -41,19 +41,17 @@
         </form>
       </div>
     </div>
-    <WebFooter />
   </div>
 </template>
 
 <script>
 import bcrypt from 'bcryptjs'
-import WebFooter from './WebFooter.vue';
 // import WebNavbar from './WebNavbar.vue';
 
 export default {
   name: 'EventLogin',
   components: {
-    WebFooter,
+    // WebFooter,
     // WebNavbar,
   },
   data() {
@@ -100,8 +98,8 @@ body {
 .MainBox {
   display: flex;
   width: 100%;
-  height: 100vh;
-  background-color: #0e9d6e;
+  /* height: 100vh; */
+  /* background-color: #0e9d6e; */
   justify-content: center;
   align-content: center;
   flex-direction: column;
