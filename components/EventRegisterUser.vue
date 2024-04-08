@@ -158,7 +158,7 @@
 .LoginButton,
 .RegisterButton{
     width: 100%;
-    background-color: #0e9d6e;
+    background-color: #035037;
 }
 .FormFooter{
     display: flex;
