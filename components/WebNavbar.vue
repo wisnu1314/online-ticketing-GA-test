@@ -21,54 +21,97 @@
       <template v-if="isUserType('user')">
         <b-nav-item href="#">Cari Event</b-nav-item>
         <b-nav-item href="#">My Tickets</b-nav-item>
-        <b-button class="NavButton" variant="link" @click="toggleDropdown">
-          <img src="https://picsum.photos/200" class="UserAvatar"  />
-          <b-dropdown v-model="dropdownOpen" no-caret>
-            <b-dropdown-item @click="navigateToProfile">My Profile</b-dropdown-item>
+        <div class="UserAvatarButton" @click="openDropdown">
+          <img src="https://iili.io/Jk1PRV4.jpg" class="UserAvatar" />
+          <b-dropdown ref="profileDropdown1" variant="link" no-caret right>
+            <b-dropdown-item @click="navigateToProfile">
+              <div class="ProfileDropdownItem">
+                <div class="AvatarContainer">
+                  <img src="https://iili.io/Jk1PRV4.jpg" class="AvatarImage" />
+                </div>
+                <div class="UserInfo">
+                  <div class="DropdownProfileName">Lebaran</div>
+                  <div class="DropdownProfileEmail">aasasdbdowqdidqwdhqwidqwdqwdiqw.gmail.com</div>
+                </div>
+              </div>
+            </b-dropdown-item>
+            <b-dropdown-divider></b-dropdown-divider>
+            <b-dropdown-item @click="navigateToProfile">Akun</b-dropdown-item>
             <b-dropdown-divider></b-dropdown-divider>
             <b-dropdown-item @click="logout">Logout</b-dropdown-item>
           </b-dropdown>
-        </b-button>
+        </div>
+        
       </template>
       <template v-else-if="isUserType('organizer')">
         <b-nav-item href="#">Cari Event</b-nav-item>
         <b-nav-item href="#">My Events</b-nav-item>
         <b-nav-item href="#">Dashboard</b-nav-item>
+        <div class="UserAvatarButton" @click="openDropdown">
+          <img src="https://iili.io/Jk1PRV4.jpg" class="UserAvatar" />
+          <b-dropdown ref="profileDropdown2" variant="link" no-caret right>
+            <b-dropdown-item @click="navigateToProfile">
+              <div class="ProfileDropdownItem">
+                <div class="AvatarContainer">
+                  <img src="https://iili.io/Jk1PRV4.jpg" class="AvatarImage" />
+                </div>
+                <div class="UserInfo">
+                  <div class="DropdownProfileName">Lebaran</div>
+                  <div class="DropdownProfileEmail">aasasdbdowqdidqwdhqwidqwdqwdiqw.gmail.com</div>
+                </div>
+              </div>
+            </b-dropdown-item>
+            <b-dropdown-divider></b-dropdown-divider>
+            <b-dropdown-item @click="navigateToProfile">Akun</b-dropdown-item>
+            <b-dropdown-divider></b-dropdown-divider>
+            <b-dropdown-item @click="navigateToSubscription">Langganan</b-dropdown-item>
+            <b-dropdown-divider></b-dropdown-divider>
+            <b-dropdown-item @click="logout">Logout</b-dropdown-item>
+          </b-dropdown>
+        </div>
       </template>    
       <template v-else-if="isUserType('admin')">
         <b-nav-item href="#">Cari Event</b-nav-item>
         <b-nav-item href="#">User Management</b-nav-item>
         <b-nav-item href="#">Dashboard</b-nav-item>
+        <div class="UserAvatarButton" @click="openDropdown">
+          <img src="https://iili.io/Jk1PRV4.jpg" class="UserAvatar" />
+          <b-dropdown ref="profileDropdown3" variant="link" no-caret right>
+            <b-dropdown-item @click="navigateToProfile">
+              <div class="ProfileDropdownItem">
+                <div class="AvatarContainer">
+                  <img src="https://iili.io/Jk1PRV4.jpg" class="AvatarImage" />
+                </div>
+                <div class="UserInfo">
+                  <div class="DropdownProfileName">Lebaran</div>
+                  <div class="DropdownProfileEmail">aasasdbdowqdidqwdhqwidqwdqwdiqw.gmail.com</div>
+                </div>
+              </div>
+            </b-dropdown-item>
+            <b-dropdown-divider></b-dropdown-divider>
+            <b-dropdown-item @click="navigateToProfile">Akun</b-dropdown-item>
+            <b-dropdown-divider></b-dropdown-divider>
+            <b-dropdown-item @click="logout">Logout</b-dropdown-item>
+          </b-dropdown>
+        </div>
       </template>
     </b-navbar-nav>
   </b-navbar>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'WebNavbar',
-  props: {
-    loggedIn: {
-      type: Boolean,
-      default: false,
-    },
-    userType: {
-      type: String,
-      default: '',
-    },
-    searchQuery: {
-      type: String,
-      default: '',
-    },
-    userData: {
-      type: Object,
-      default: () => ({}),
-    },
-  },
+
   data() {
     return {
       searchInput: this.searchQuery,
       dropdownOpen: false,
+      loggedIn:true,
+      userType:'user',
+      userData:{},
     };
   },
   computed: {
@@ -88,8 +131,23 @@ export default {
     },
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
+      console.log("dropdown",this.dropdownOpen)
+    },
+    openDropdown() {
+      if(this.isUserType('user')){
+        this.$refs.profileDropdown1?.show();
+      }
+      if(this.isUserType('organizer')){
+        this.$refs.profileDropdown2?.show();
+      }
+      if(this.isUserType('admin')){
+        this.$refs.profileDropdown3?.show();
+      }
     },
     navigateToProfile() {
+      // To be implemented
+    },
+    navigateToSubscription() {
       // To be implemented
     },
     logout() {
@@ -97,6 +155,32 @@ export default {
     },
     isUserType(type) {
       return this.userType === type;
+    },
+    async checkLoginStatus() {
+      try {
+        // Make API request to check user login status
+        const response = await axios.get('/api/check-login');
+        if (response.data.loggedIn) {
+          this.isUserLoggedIn = true;
+          this.fetchUserData(); // Fetch user data if logged in
+        } else {
+          this.isUserLoggedIn = false;
+          this.userData = null; // Reset user data
+        }
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Error checking login status:', error);
+      }
+    },
+    async fetchUserData() {
+      try {
+        // Make API request to fetch user data
+        const response = await axios.get('/api/user-data');
+        this.userData = response.data; // Set user data
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Error fetching user data:', error);
+      }
     },
   },
 };
@@ -107,7 +191,7 @@ export default {
   display: flex;
   height: 8vh;
   align-items: center;
-  justify-content: center;
+  justify-content: space-around;
   background-color: #0e9d6e;
   gap: 100px;
   color: white;
@@ -154,10 +238,54 @@ export default {
     color: white;
   }
 
-.UserAvatar {
-  width: 35px; /* Adjust as needed */
-  height: 35px; /* Adjust as needed */
+.UserAvatarButton {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+}
+
+.UserAvatarButton img {
+  width: 40px;
+  height: 40px; 
   border-radius: 50%;
+}
+.dropdown-menu {
+    max-width: 16rem !important;
+}
+.b-dropdown-toggle {
+  display: none !important; 
+  visibility: hidden;
+}
+
+.ProfileDropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.AvatarContainer {
+  width: 25%;
+  max-width: 50px; 
+}
+
+.AvatarImage {
+  width: 100%;
+  border-radius: 50%;
+}
+
+.UserInfo {
+  flex-grow: 1;
+}
+.DropdownProfileName{
+  font-size: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.DropdownProfileEmail{
+  font-size: 0.75rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 @media screen and (max-width: 768px) {
   .Navbar {
