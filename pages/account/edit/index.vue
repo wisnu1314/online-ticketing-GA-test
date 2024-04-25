@@ -20,29 +20,29 @@
           <div class="col">
             <div class="form-group">
               <b>Nama Depan</b>
-              <input class='form-control' v-model=account.firstname>
+              <input v-model=account.firstname class='form-control'>
             </div>
             <div class="form-group">
               <b>Nama Belakang</b>
-              <input class='form-control' v-model=account.lastname>
+              <input v-model=account.lastname class='form-control'>
             </div>
             <div>
               <b>Email </b>
-              <input class='form-control' v-model=account.email>
+              <input v-model=account.email class='form-control'>
             </div>
           </div>
           <div class="col">
             <div class="form-group">
               <b>Password Lama</b>
-              <input class='form-control' type="password" v-model="account.oldpassword" placeholder='********'>
+              <input v-model="account.oldpassword" class='form-control' type="password" placeholder='********'>
             </div>
             <div class="form-group">
               <b>Password Baru</b>
-              <input class='form-control' type="password" v-model="account.newpassword" placeholder='********'>
+              <input v-model="account.newpassword" class='form-control' type="password" placeholder='********'>
             </div>
             <div>
               <b>Konfirmasi Password </b>
-              <input class='form-control' type="password" v-model="account.confirmpassword" placeholder='********'>
+              <input v-model="account.confirmpassword" class='form-control' type="password" placeholder='********'>
             </div>
           </div>
         </div>
@@ -55,48 +55,48 @@
               <div class="col">
                 <div class="form-group">
                   <b>Nama Organisasi</b>
-                  <input class='form-control' v-model=data_eo.name>
+                  <input v-model=data_eo.name class='form-control'>
                 </div>
                 <div class="form-group">
                   <b>Email</b>
-                  <input class='form-control' v-model=data_eo.email>
+                  <input v-model=data_eo.email class='form-control'>
                 </div>
                 <div class="form-group">
                   <b>Tahun Berdiri</b>
-                  <input class='form-control' v-model=data_eo.year>
+                  <input v-model=data_eo.year class='form-control'>
                 </div>
                 <div class="form-group">
                   <b>Industri</b>
-                  <input class='form-control' v-model="data_eo.industry">
+                  <input v-model="data_eo.industry" class='form-control'>
                 </div>
               </div>
               <div class="col">
                 <div class="form-group">
                   <b>Password Lama</b>
-                  <input class='form-control' type="password" v-model="data_eo.oldpassword" placeholder='********'>
+                  <input v-model="data_eo.oldpassword" class='form-control' type="password" placeholder='********'>
                 </div>
                 <div class="form-group">
                   <b>Password Baru</b>
-                  <input class='form-control' type="password" v-model="data_eo.newpassword" placeholder='********'>
+                  <input v-model="data_eo.newpassword" class='form-control' type="password" placeholder='********'>
                 </div>
                 <div>
                   <b>Konfirmasi Password </b>
-                  <input class='form-control' type="password" v-model="data_eo.confirmpassword" placeholder='********'>
+                  <input v-model="data_eo.confirmpassword" class='form-control' type="password" placeholder='********'>
                 </div>
                 <div>
                   <b>Nomor Telepon Organisasi </b>
-                  <input class='form-control' v-model="data_eo.phone">
+                  <input v-model="data_eo.phone" class='form-control'>
                 </div>
               </div>
             </div>
             <div class="col">
               <div class="form-group">
                 <b>Alamat Organisasi</b>
-                <input class='form-control' v-model="data_eo.address">
+                <input v-model="data_eo.address" class='form-control'>
               </div>
               <div class="form-group">
                 <b>Deskripsi</b>
-                <textarea class='form-control' v-model="data_eo.description"></textarea>
+                <textarea v-model="data_eo.description" class='form-control'></textarea>
               </div>
             </div>
           </div>
