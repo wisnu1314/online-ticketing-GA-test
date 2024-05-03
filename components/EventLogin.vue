@@ -45,15 +45,9 @@
 </template>
 
 <script>
-import bcrypt from 'bcryptjs'
-// import WebNavbar from './WebNavbar.vue';
 
 export default {
   name: 'EventLogin',
-  components: {
-    // WebFooter,
-    // WebNavbar,
-  },
   data() {
     return {
       isLoggedIn: true,
@@ -76,8 +70,30 @@ export default {
     },
     async login() {
       // Handle login logic, e.g., call an API
-      const hashedPassword = await bcrypt.hash(this.form.password, 10);
-      this.$store.dispatch('login', { email: this.form.email, password: hashedPassword });
+      try {
+        const body = {
+          email: this.form.email,
+          password: this.form.password,
+        }
+        console.log(body)
+        const response = await this.$axios.post('/api/auth/login',body);
+        // const response = await this.$axios.get('/api/health');
+        const userData = response.data;
+        const userDataToStore = Object.fromEntries(
+        Object.entries(userData.data).filter(([key]) => key !== 'password' && key !== 'token'));
+        localStorage.setItem('userData', JSON.stringify(userDataToStore));
+        this.$emit('userLoggedIn', userData);
+      } catch (error) {
+          console.error('Login error:', error);
+          if (error.response) {
+            console.error('Response data:', error.response.data);
+            console.error('Response status:', error.response.status);
+          } else if (error.request) {
+            console.error('No response received:', error.request);
+          } else {
+            console.error('Error setting up request:', error.message);
+          }
+      }
     },
     performSearch() {
       // eslint-disable-next-line no-console

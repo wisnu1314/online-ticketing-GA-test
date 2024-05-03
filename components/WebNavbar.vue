@@ -18,7 +18,7 @@
       <b-button class="NavButton" href="/loginPage">Masuk</b-button>
     </b-navbar-nav>
     <b-navbar-nav v-if="isUserLoggedIn" class="RightNavigation">
-      <template v-if="isUserType('user')">
+      <template v-if="isUserType('customer')">
         <b-nav-item href="#">Cari Event</b-nav-item>
         <b-nav-item href="#">My Tickets</b-nav-item>
         <div class="UserAvatarButton" @click="openDropdown">
@@ -29,9 +29,9 @@
                 <div class="AvatarContainer">
                   <img src="https://iili.io/Jk1PRV4.jpg" class="AvatarImage" />
                 </div>
-                <div class="UserInfo">
-                  <div class="DropdownProfileName">Lebaran</div>
-                  <div class="DropdownProfileEmail">aasasdbdowqdidqwdhqwidqwdqwdiqw.gmail.com</div>
+                <div v-if="userData" class="UserInfo">
+                  <div class="DropdownProfileName">{{ userData?.name }}</div>
+                  <div class="DropdownProfileEmail">{{ userData?.email }}</div>
                 </div>
               </div>
             </b-dropdown-item>
@@ -43,7 +43,7 @@
         </div>
         
       </template>
-      <template v-else-if="isUserType('organizer')">
+      <template v-else-if="isUserType('eo')">
         <b-nav-item href="#">Cari Event</b-nav-item>
         <b-nav-item href="#">My Events</b-nav-item>
         <b-nav-item href="#">Dashboard</b-nav-item>
@@ -55,9 +55,9 @@
                 <div class="AvatarContainer">
                   <img src="https://iili.io/Jk1PRV4.jpg" class="AvatarImage" />
                 </div>
-                <div class="UserInfo">
-                  <div class="DropdownProfileName">Lebaran</div>
-                  <div class="DropdownProfileEmail">aasasdbdowqdidqwdhqwidqwdqwdiqw.gmail.com</div>
+                <div v-if="userData" class="UserInfo">
+                  <div class="DropdownProfileName">{{ userData?.name }}</div>
+                  <div class="DropdownProfileEmail">{{ userData?.email }}</div>
                 </div>
               </div>
             </b-dropdown-item>
@@ -82,9 +82,9 @@
                 <div class="AvatarContainer">
                   <img src="https://iili.io/Jk1PRV4.jpg" class="AvatarImage" />
                 </div>
-                <div class="UserInfo">
-                  <div class="DropdownProfileName">Lebaran</div>
-                  <div class="DropdownProfileEmail">aasasdbdowqdidqwdhqwidqwdqwdiqw.gmail.com</div>
+                <div v-if="userData" class="UserInfo">
+                  <div class="DropdownProfileName">{{ userData?.name }}</div>
+                  <div class="DropdownProfileEmail">{{ userData?.email }}</div>
                 </div>
               </div>
             </b-dropdown-item>
@@ -100,7 +100,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 
 export default {
   name: 'WebNavbar',
@@ -109,8 +108,8 @@ export default {
     return {
       searchInput: this.searchQuery,
       dropdownOpen: false,
-      loggedIn:true,
-      userType:'user',
+      loggedIn:false,
+      userType:'',
       userData:{},
     };
   },
@@ -124,6 +123,16 @@ export default {
     searchQuery(newVal) {
       this.searchInput = newVal;
     },
+
+  },
+  mounted() {
+    window.addEventListener('storage', this.fetchUserData);
+    // Periodically check localStorage for userData updates
+    this.checkSessionStorageUserData();
+  },
+  beforeDestroy() {
+    // Remove event listener when component is destroyed
+    window.removeEventListener('storage', this.fetchUserData);
   },
   methods: {
     updateSearchQuery() {
@@ -134,7 +143,7 @@ export default {
       console.log("dropdown",this.dropdownOpen)
     },
     openDropdown() {
-      if(this.isUserType('user')){
+      if(this.isUserType('customer')){
         this.$refs.profileDropdown1?.show();
       }
       if(this.isUserType('organizer')){
@@ -151,36 +160,29 @@ export default {
       // To be implemented
     },
     logout() {
-      // logout
+      localStorage.removeItem('userData');
+      this.$router.push('/loginPage');
+      this.$emit('userLoggedOut');
     },
     isUserType(type) {
       return this.userType === type;
     },
-    async checkLoginStatus() {
-      try {
-        // Make API request to check user login status
-        const response = await axios.get('/api/check-login');
-        if (response.data.loggedIn) {
-          this.isUserLoggedIn = true;
-          this.fetchUserData(); // Fetch user data if logged in
-        } else {
-          this.isUserLoggedIn = false;
-          this.userData = null; // Reset user data
-        }
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Error checking login status:', error);
-      }
-    },
-    async fetchUserData() {
+    fetchUserData() {
       try {
         // Make API request to fetch user data
-        const response = await axios.get('/api/user-data');
-        this.userData = response.data; // Set user data
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        this.userData = userData; 
+        this.userType = userData?.role
+        this.loggedIn = userData?.role === 'customer' || userData?.role=== 'eo' || userData?.role === 'admin'
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error('Error fetching user data:', error);
       }
+    },
+    checkSessionStorageUserData() {
+      setInterval(() => {
+        this.fetchUserData();
+      }, 2000); // Check every 30 seconds (adjust as needed)
     },
   },
 };
@@ -273,7 +275,6 @@ export default {
   width: 100%;
   border-radius: 50%;
 }
-
 .UserInfo {
   flex-grow: 1;
 }
