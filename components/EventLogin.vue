@@ -45,7 +45,6 @@
 </template>
 
 <script>
-
 export default {
   name: 'EventLogin',
   data() {
@@ -83,6 +82,7 @@ export default {
         Object.entries(userData.data).filter(([key]) => key !== 'password' && key !== 'token'));
         localStorage.setItem('userData', JSON.stringify(userDataToStore));
         this.$emit('userLoggedIn', userData);
+        window.location.href = '/home';
       } catch (error) {
           console.error('Login error:', error);
           if (error.response) {

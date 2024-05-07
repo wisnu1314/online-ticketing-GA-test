@@ -32,7 +32,7 @@
         </p>
         <p class="h5">Tags</p>
         <div class="d-flex">
-          <button class="mr-3 btn_tags" v-for="(tag, index) in tags" :key="index"> {{ tag }}</button>
+          <button v-for="(tag, index) in tags" :key="index" class="mr-3 btn_tags"> {{ tag }}</button>
         </div>
         <p class="h5">Informasi Organizer</p>
         <div class="info_org">

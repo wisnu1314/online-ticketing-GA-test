@@ -60,10 +60,6 @@
   
   export default {
     name: 'EventRegisterUser',
-    components: {
-      // WebFooter,
-      // WebNavbar,
-    },
     data() {
       return {
         isLoggedIn: false,
