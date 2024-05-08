@@ -54,26 +54,34 @@
                 <h2>Konten Promosional</h2>
                 <div>
                     <label for="event-poster">Unggah Poster Event</label>
-                    <!-- <input id="event-poster" type="file"/> -->
-                    <div class="FileUpload">
-                        <div
-                            class="UploadArea"
-                            @dragover.prevent
-                            @drop.prevent="handleDrop"
-                            @click="$refs.fileInput.click()"
-                        >
-                            <b-icon-upload aria-setsize="lg"/>
-                            <p>Click or drag file to this area to upload</p>
-                            <p>Support for a single or bulk upload. Strictly prohibit from uploading NSFW images.</p>
+                    <div class="row">
+                        <div class="col">
+                            <div class="FileUpload">
+                                <div
+                                    class="UploadArea"
+                                    @dragover.prevent
+                                    @drop.prevent="handleDrop"
+                                    @click="$refs.fileInput.click()"
+                                >
+                                    <b-icon-upload aria-setsize="lg"/>
+                                    <p>Click or drag file to this area to upload</p>
+                                    <p>Support for a single or bulk upload. Strictly prohibit from uploading NSFW images.</p>
+                                </div>
+                                <input
+                                    ref="fileInput"
+                                    type="file"
+                                    accept=".png, .jpg, .jpeg, .gif"
+                                    style="display: none"
+                                    multiple
+                                    @change="handleFileSelect"
+                                />
+                            </div>
                         </div>
-                        <input
-                            ref="fileInput"
-                            type="file"
-                            accept=".png, .jpg, .jpeg, .gif"
-                            style="display: none"
-                            multiple
-                            @change="handleFileSelect"
-                        />
+                        <div class="col">
+                            <b-form-group label="Tags" label-for="event-tag">
+                                <b-form-input id="event-tag" v-model="eventTags" />
+                            </b-form-group>
+                        </div>
                     </div>
                 </div>
                 <b-form-group label="Deskripsi Event">
@@ -119,6 +127,7 @@ export default {
             eventEndTime: '',
             eventLocation: '',
             ticketCategories: [],
+            eventTags:'',
             eventDescription: null,
             eventPoster: null,
             chances:4,
