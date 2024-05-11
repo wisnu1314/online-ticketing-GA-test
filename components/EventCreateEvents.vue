@@ -7,29 +7,29 @@
                 <div class="row">
                     <div class="col">
                         <b-form-group label="Judul Event" label-for="event-title">
-                            <b-form-input id="event-title" v-model="eventform.eventTitle" />
+                            <b-form-input id="event-title" v-model="eventform.eventTitle" required/>
                         </b-form-group>
                     </div>
                     <div class="col-8">
                         <b-form-group label="Subjudul" label-for="event-subtitle">
-                            <b-form-input id="event-subtitle" v-model="eventform.eventSubtitle" />
+                            <b-form-input id="event-subtitle" v-model="eventform.eventSubtitle" required/>
                         </b-form-group>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
                         <b-form-group label="Waktu Mulai" label-for="event-date">
-                            <b-form-input id="event-date" v-model="eventform.eventStartTime" type="datetime-local" />
+                            <b-form-input id="event-date" v-model="eventform.eventStartTime" type="datetime-local" required/>
                         </b-form-group>
                     </div>
                     <div class="col">
                         <b-form-group label="Waktu Selesai" label-for="event-end-date">
-                            <b-form-input id="event-end-date" v-model="eventform.eventEndTime" type="datetime-local" />
+                            <b-form-input id="event-end-date" v-model="eventform.eventEndTime" type="datetime-local" required/>
                         </b-form-group>
                     </div>
                     <div class="col-8">
                         <b-form-group label="Lokasi" label-for="event-location">
-                            <b-form-input id="event-location" v-model="eventform.eventLocation" />
+                            <b-form-input id="event-location" v-model="eventform.eventLocation" required/>
                         </b-form-group>
                     </div>
                 </div>
@@ -37,18 +37,28 @@
 
             <div class="FormContent">
                 <h2>Kategori dan Harga Tiket</h2>
-                <div v-for="(ticketCategory, index) in eventform.ticketCategories" :key="index">
-                    <b-form-group label="Nama Kategori Tiket">
-                        <b-form-input v-model="ticketCategory.name" />
-                    </b-form-group>
-                    <b-form-group label="Jumlah Tiket">
-                        <b-form-input v-model="ticketCategory.quantity" type="number" />
-                    </b-form-group>
-                    <b-form-group label="Harga per Tiket">
-                        <b-form-input v-model="ticketCategory.price" type="number" />
-                    </b-form-group>
+                <div v-for="(ticketCategory, index) in eventform.ticketCategories" :key="index" class="row">
+                    <div class="col-8">
+                        <b-form-group label="Nama Kategori Tiket">
+                            <b-form-input v-model="ticketCategory.name" required />
+                        </b-form-group>
+                    </div>
+                    <div class="col">
+                        <b-form-group label="Jumlah Tiket">
+                            <b-form-input v-model="ticketCategory.quantity" type="number" min=1 required/>
+                        </b-form-group>
+                    </div>
+                    <div class="col">
+                        <b-form-group label="Harga per Tiket">
+                            <b-form-input v-model="ticketCategory.price" type="number" min=0 required/>
+                        </b-form-group>
+                        
+                    </div>
+                    <div class="RemoveButtonContainer"> 
+                        <button class="RemoveButton" @click="removeTicketCategory(index)">-</button>
+                    </div>
                 </div>
-                <b-button @click="addTicketCategory">Tambah Kategori Tiket</b-button>
+                <b-button id="AddCategoryButton" @click="addTicketCategory">Tambah Kategori Tiket</b-button>
             </div>
             <div class="FormContent">
                 <h2>Konten Promosional</h2>
@@ -152,13 +162,20 @@ export default {
                 eventStartTime: '',
                 eventEndTime:  '',
                 eventLocation:  '',
-                ticketCategories:  [],
+                ticketCategories:  [
+                    {
+                        name:'',
+                        quantity:1,
+                        price:0,
+                    },
+                ],
                 eventTags:  [],
                 eventDescription:  null,
             },
             selectedTags:"",
             chances: 4,
             showForm:true,
+            generatedContent:'',
         }
     },
     computed: {
@@ -172,14 +189,6 @@ export default {
         }
     },
     watch: {
-        formData: {
-            handler(newData) {
-                console.log('Props formData:', newData);
-                // Handle changes in formData if needed
-                // For example, update eventform based on new props
-            },
-            immediate: true, // Trigger on component creation
-        },
         'eventform.eventStartTime'(newValue, oldValue) {
             this.checkTimeValidity();
         },
@@ -198,17 +207,43 @@ export default {
         addTicketCategory() {
             this.eventform.ticketCategories.push({
                 name: '',
-                quantity: 0,
+                quantity: 1,
                 price: 0
             })
         },
-        autoGenerateDesc(){
-            if(this.chances === 0){
-                alert("Kesempatan habis")
+        removeTicketCategory(index) {
+            this.eventform.ticketCategories.splice(index, 1);
+        },
+        async autoGenerateDesc(){
+            const userData = JSON.parse(localStorage.getItem('userData'));
+            const userid = userData?.userId;
+            let pureText = ''
+            if(this.isHTML(this.eventform.eventDescription)){
+                pureText = this.extractPureText(this.eventform.eventDescription);
             }
             else{
-                this.chances--;
-                console.log(this.chances)
+                pureText = this.eventform.eventDescription
+            }
+            if (pureText === '') {
+                alert('No text to generate.'); // Handle empty content
+                return;
+            }
+
+            try {
+                // Make API request to ChatGPT with the pure text
+                if(this.chances === 0){
+                    alert("Kesempatan habis")
+                }
+                else{
+                    const response = await this.$axios.post('api/generate_description/generate-description', { userId:userid, text: pureText });
+                    this.generatedContent = response.data.message; // Assuming API response has a key 'generatedText'
+                    this.chances--;
+                    this.eventform.eventDescription += this.generatedContent
+                    console.log(this.chances)
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error generating content. Please try again.');
             }
             
         },
@@ -244,7 +279,22 @@ export default {
             this.showForm = !this.showForm
             this.$emit('preview-event', this.eventform);
             // this.$router.push({ name: 'PreviewEvent', params: { formData: this.eventform } });
-        }
+        },
+        isHTML(txt) {
+      // Check if eventDescription contains HTML tags
+            const containsHTML = /<[a-z][\s\S]*>/i.test(txt);
+            if (containsHTML) {
+                return true
+            } else {
+                return false
+            }
+        },
+        extractPureText(htmlContent) {
+      // Use DOMParser to extract text from HTML
+            const parser = new DOMParser();
+            const parsedHtml = parser.parseFromString(htmlContent, 'text/html');
+            return parsedHtml.body.textContent || ''; // Extract text content
+        },
         
     },
 
@@ -299,6 +349,24 @@ h3{
 .col-8 {
     flex: 2;
     margin-right: 10px;
+}
+.RemoveButtonContainer {
+    display:flex;
+    align-items: flex-end;
+    flex: 0.2;
+    margin-right: 10px;
+}
+.RemoveButton{
+    height: 2rem;
+    align-self:flex-end;
+    margin-bottom: 1.25rem;
+    border-radius: 0.5rem;
+}
+#AddCategoryButton{
+    color:#035037;
+    background-color: transparent;
+    border-color: #035037;
+    width: 100%;
 }
 .BottomButtons {
     display: flex;
