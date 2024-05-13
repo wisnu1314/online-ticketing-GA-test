@@ -12,24 +12,24 @@
                     </div>
                     <div class="col-8">
                         <b-form-group label="Subjudul" label-for="event-subtitle">
-                            <b-form-input id="event-subtitle" v-model="eventform.eventSubtitle" required/>
+                            <b-form-input id="event-subtitle" v-model="eventform.subTitle" required/>
                         </b-form-group>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
                         <b-form-group label="Waktu Mulai" label-for="event-date">
-                            <b-form-input id="event-date" v-model="eventform.eventStartTime" type="datetime-local" required/>
+                            <b-form-input id="event-date" v-model="eventform.startDate" type="datetime-local" required/>
                         </b-form-group>
                     </div>
                     <div class="col">
                         <b-form-group label="Waktu Selesai" label-for="event-end-date">
-                            <b-form-input id="event-end-date" v-model="eventform.eventEndTime" type="datetime-local" required/>
+                            <b-form-input id="event-end-date" v-model="eventform.endDate" type="datetime-local" required/>
                         </b-form-group>
                     </div>
                     <div class="col-8">
                         <b-form-group label="Lokasi" label-for="event-location">
-                            <b-form-input id="event-location" v-model="eventform.eventLocation" required/>
+                            <b-form-input id="event-location" v-model="eventform.location" required/>
                         </b-form-group>
                     </div>
                 </div>
@@ -37,25 +37,26 @@
 
             <div class="FormContent">
                 <h2>Kategori dan Harga Tiket</h2>
-                <div v-for="(ticketCategory, index) in eventform.ticketCategories" :key="index" class="row">
+                <div v-for="(ticketCategory, index) in eventform.tickets" :key="index" class="row">
                     <div class="col-8">
                         <b-form-group label="Nama Kategori Tiket">
-                            <b-form-input v-model="ticketCategory.name" required />
+                            <b-form-input v-model="ticketCategory.categoryName" required />
                         </b-form-group>
                     </div>
                     <div class="col">
                         <b-form-group label="Jumlah Tiket">
-                            <b-form-input v-model="ticketCategory.quantity" type="number" min=1 required/>
+                            <b-form-input v-model="ticketCategory.totalTickets" type="number" min=1 required/>
                         </b-form-group>
                     </div>
                     <div class="col">
                         <b-form-group label="Harga per Tiket">
-                            <b-form-input v-model="ticketCategory.price" type="number" min=0 required/>
+                            <b-form-input v-model="ticketCategory.pricePerTicket" type="number" min=0 required/>
                         </b-form-group>
                         
                     </div>
                     <div class="RemoveButtonContainer"> 
-                        <button class="RemoveButton" @click="removeTicketCategory(index)">-</button>
+                        <button v-if="index !== 0" class="RemoveButton" @click="removeTicketCategory(index)">-</button>
+                        <button v-if="index == 0" class="Unclickable" @click="removeTicketCategory(index)">-</button>
                     </div>
                 </div>
                 <b-button id="AddCategoryButton" @click="addTicketCategory">Tambah Kategori Tiket</b-button>
@@ -75,16 +76,20 @@
                                 >
                                     <b-icon-upload aria-setsize="lg"/>
                                     <p>Click or drag file to this area to upload</p>
-                                    <p>Support for a single or bulk upload. Strictly prohibit from uploading NSFW images.</p>
+                                    <p>Support for a single upload. Strictly prohibit from uploading NSFW images.</p>
                                 </div>
                                 <input
                                     ref="fileInput"
                                     type="file"
                                     accept=".png, .jpg, .jpeg, .gif"
                                     style="display: none"
-                                    multiple
                                     @change="handleFileSelect"
                                 />
+                                
+                            </div>
+                            <div v-if="uploadedFile" class="UploadedFile">
+                                <p>{{ uploadedFile.name }}</p>
+                                <b-icon-trash style="cursor: pointer; color:red" @click="eraseFile"/>
                             </div>
                         </div>
                         <div class="col">
@@ -97,7 +102,7 @@
                                 />
                             </b-form-group>
                             <div class="SelectedTags">
-                                <span v-for="(tag, index) in eventform.eventTags" :key="index" class="TagItem">{{ tag }}</span>
+                                <span v-for="(tag, index) in eventform.promotionalContent.tags" :key="index" class="TagItem">{{ tag }}</span>
                             </div>
                         </div>
                     </div>
@@ -109,7 +114,7 @@
                         </div>
                         <b-button size="sm" class="GenerateButton" @click="autoGenerateDesc">Auto Generate</b-button>
                     </div>
-                    <wysiwyg v-model="eventform.eventDescription" />
+                    <wysiwyg v-model="eventform.promotionalContent.description" />
                 </b-form-group>
                 <div>
                     <b-button @click="togglePreview">Lihat Preview</b-button>
@@ -144,7 +149,7 @@ import "vue-wysiwyg/dist/vueWysiwyg.css";
 import PreviewEvent from "./PreviewEvent.vue"
 
 Vue.use(wysiwyg, {
-    hideModules: { "hyperLink": true },
+    hideModules: { "hyperLink": true, "InsertImage":true },
     forcePlainTextOnPaste: true,
     maxHeight: "30rem",
 });
@@ -158,29 +163,33 @@ export default {
         return {
             eventform: {
                 eventTitle:  '',
-                eventSubtitle:  '',
-                eventStartTime: '',
-                eventEndTime:  '',
-                eventLocation:  '',
-                ticketCategories:  [
+                subTitle:  '',
+                startDate: '',
+                endDate:  '',
+                location:  '',
+                tickets:  [
                     {
-                        name:'',
-                        quantity:1,
-                        price:0,
+                        categoryName:'Nama Tiket',
+                        totalTickets:1,
+                        pricePerTicket:0,
                     },
                 ],
-                eventTags:  [],
-                eventDescription:  null,
+                promotionalContent:{
+                    tags:  [],
+                    description:null,
+                    posterImageUrl:''
+                },
             },
             selectedTags:"",
             chances: 4,
             showForm:true,
             generatedContent:'',
+            uploadedFile:null,
         }
     },
     computed: {
         content() {
-            return this.eventform.eventDescription;
+            return this.eventform.description;
         },
         remainingChances() {
             console.log("remaining", this.chances)
@@ -189,40 +198,40 @@ export default {
         }
     },
     watch: {
-        'eventform.eventStartTime'(newValue, oldValue) {
+        'eventform.startDate'(newValue, oldValue) {
             this.checkTimeValidity();
         },
-        'eventform.eventEndTime'(newValue, oldValue) {
+        'eventform.endDate'(newValue, oldValue) {
             this.checkTimeValidity();
         },
 },
     methods:{
         checkTimeValidity() {
-            if (new Date(this.eventform.eventStartTime) >= new Date(this.eventform.eventEndTime)) {
+            if (new Date(this.eventform.startDate) >= new Date(this.eventform.endDate)) {
                 alert("Waktu Mulai harus lebih awal dari Waktu Selesai.");
-                this.eventform.eventStartTime = '';
-                this.eventform.eventEndTime = '';
+                this.eventform.startDate = '';
+                this.eventform.endDate = '';
             }
         },
         addTicketCategory() {
-            this.eventform.ticketCategories.push({
-                name: '',
-                quantity: 1,
-                price: 0
+            this.eventform.tickets.push({
+                categoryName:'Nama Tiket',
+                totalTickets:1,
+                pricePerTicket:0,
             })
         },
         removeTicketCategory(index) {
-            this.eventform.ticketCategories.splice(index, 1);
+            this.eventform.tickets.splice(index, 1);
         },
         async autoGenerateDesc(){
             const userData = JSON.parse(localStorage.getItem('userData'));
             const userid = userData?.userId;
             let pureText = ''
-            if(this.isHTML(this.eventform.eventDescription)){
-                pureText = this.extractPureText(this.eventform.eventDescription);
+            if(this.isHTML(this.eventform.description)){
+                pureText = this.extractPureText(this.eventform.description);
             }
             else{
-                pureText = this.eventform.eventDescription
+                pureText = this.eventform.description
             }
             if (pureText === '') {
                 alert('No text to generate.'); // Handle empty content
@@ -235,10 +244,10 @@ export default {
                     alert("Kesempatan habis")
                 }
                 else{
-                    const response = await this.$axios.post('api/generate_description/generate-description', { userId:userid, text: pureText });
+                    const response = await this.$axios.post('api/generate-description', { userId:userid, text: pureText });
                     this.generatedContent = response.data.message; // Assuming API response has a key 'generatedText'
                     this.chances--;
-                    this.eventform.eventDescription += this.generatedContent
+                    this.eventform.description += this.generatedContent
                     console.log(this.chances)
                 }
             } catch (error) {
@@ -253,6 +262,7 @@ export default {
         handleFileSelect(e) {
             this.handleFiles(e.target.files);
         },
+        // async if the API integrated
         handleFiles(files) {
             const allowedTypes = ['image/png', 'image/jpeg', 'image/gif'];
             const maxFileSize = 10 * 1024 * 1024; 
@@ -266,22 +276,56 @@ export default {
                     return;
                 }
             }
-            console.log(files);
+            // Sambungkan dengan backend dan taruh link gambar di eventPoster
+            if (files.length > 0) {
+                this.uploadedFile = files[0];
+            }
+            console.log("drop", this.uploadedFile);
+            // try {
+            //     const formData = new FormData();
+            //     const userData = JSON.parse(localStorage.getItem('userData'));
+            //     const bearerToken = userData?.token;
+            //     formData.append('file', files[0]);
+
+            //     // Make the API request to upload the file
+            //     const response = await this.$axios.post('api/posters', formData, {
+            //         headers: {
+            //             'Content-Type': 'multipart/form-data',
+            //             'Authorization': `Bearer ${bearerToken}`,
+            //         },
+            //     });
+
+                
+            //     if (response.data.code === 201 && response.data.status === 'OK') {
+            //         this.eventform.promotionalContent.posterImageUrl = response.data.data.file.url;
+            //         alert('File uploaded successfully.');
+            //     } else {
+            //         alert('Failed to upload file. Please try again.');
+            //     }
+            // } catch (error) {
+            //     console.error('Error uploading file:', error);
+            //     alert('Error uploading file. Please try again.');
+            // }
+        },
+        eraseFile() {
+            this.uploadedFile = null;
+            // Clear the file input if needed
+            this.$refs.fileInput.value = '';
         },
         addTag() {
-            if (this.selectedTags && !this.eventform.eventTags.includes(this.selectedTags)) {
-                this.eventform.eventTags.push(this.selectedTags);
+            if (this.selectedTags && !this.eventform.promotionalContent.tags.includes(this.selectedTags)) {
+                this.eventform.promotionalContent.tags.push(this.selectedTags);
                 this.selectedTags = ''; // Clear the input after adding the tag
             }
         },
         togglePreview(){
-            console.log("Preview", this.eventform)
+            console.log("Preview", this.eventform, this.extractPureText(this.eventform.description))
             this.showForm = !this.showForm
             this.$emit('preview-event', this.eventform);
             // this.$router.push({ name: 'PreviewEvent', params: { formData: this.eventform } });
         },
         isHTML(txt) {
-      // Check if eventDescription contains HTML tags
+      // Check if description contains HTML tags
             const containsHTML = /<[a-z][\s\S]*>/i.test(txt);
             if (containsHTML) {
                 return true
@@ -310,8 +354,20 @@ export default {
     margin-bottom: 1rem;
 }
 .FormBox{
+    width: 90%;
+    max-width: 70rem; 
+    margin: 0 auto;
+    overflow-y: auto;
+    background-color: white;
+    padding: 20px;
+    border:solid #f2f0e9 1px;
+    border-radius: 0.5rem;
+    margin-top:0.5rem;
+    margin-bottom: 0.5rem;
+}
+.PreviewBox{
     width: 85%;
-    max-width: 62.5rem; 
+    max-width: 67.5rem; 
     margin: 0 auto;
     overflow-y: auto;
     background-color: white;
@@ -361,6 +417,19 @@ h3{
     align-self:flex-end;
     margin-bottom: 1.25rem;
     border-radius: 0.5rem;
+    background-color: #035037;
+    color: white;
+}
+.Unclickable {
+    height: 2rem;
+    align-self:flex-end;
+    margin-bottom: 1.25rem;
+    border-radius: 0.5rem;
+    color: white;
+    cursor: not-allowed; /* Show not-allowed cursor */
+    opacity: 0.6; /* Reduce opacity to indicate it's disabled */
+    pointer-events: none; /* Disable pointer events to prevent clicks */
+    background-color:#57576F;
 }
 #AddCategoryButton{
     color:#035037;
@@ -393,7 +462,7 @@ h3{
     gap:1rem;
     margin:0.5rem;
     width: 100%;
-    max-width: 62.5rem;
+    max-width: 70rem;
     padding-right: 0.5rem;
 }
 .GenerateButton {
@@ -426,6 +495,13 @@ h3{
   width: 50px;
   height: 50px;
   margin-bottom: 10px;
+}
+.UploadedFile {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  gap:0.5rem;
 }
 .SelectedTags {
     display: flex;
