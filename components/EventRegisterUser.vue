@@ -1,6 +1,5 @@
 <template>
     <div class="MainBox">
-      <!-- <WebNavbar :logged-in.sync="isLoggedIn" :user-type.sync="userType" :search-query.sync="searchQuery" /> -->
       <div class="MiddleBox">
         <div class="FormBox">
           <div class="FormTitle">Daftar</div>
@@ -58,10 +57,7 @@
   </template>
 
   <script>
-  // import bcrypt from 'bcryptjs';
-  // import WebFooter from './WebFooter.vue';
-  // import WebNavbar from './WebNavbar.vue';
-
+  
   export default {
     name: 'EventRegisterUser',
     components: {
@@ -82,9 +78,30 @@
       };
     },
     methods: {
-      register() {
+      async register() {
       // eslint-disable-next-line no-console
-      console.log('Organizer registration form data:', this.form);
+      try {
+        const body = {
+          name:this.form.firstName + ' ' + this.form.lastName,
+          email: this.form.email,
+          password: this.form.password,
+        }
+        console.log(body)
+        const response = await this.$axios.post('/api/auth/register',body);
+        const userData = response.data;
+        // localStorage.setItem('userData', JSON.stringify(userData));
+        this.$emit('userRegistered', userData);
+      } catch (error) {
+          console.error('Login error:', error);
+          if (error.response) {
+            console.error('Response data:', error.response.data);
+            console.error('Response status:', error.response.status);
+          } else if (error.request) {
+            console.error('No response received:', error.request);
+          } else {
+            console.error('Error setting up request:', error.message);
+          }
+      }
     },
       performSearch() {
       // eslint-disable-next-line no-console

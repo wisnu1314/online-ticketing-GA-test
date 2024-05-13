@@ -1,6 +1,5 @@
 <template>
   <div class="MainBox">
-    <!-- <WebNavbar :logged-in.sync="isLoggedIn" :user-type.sync="userType" :search-query.sync="searchQuery" /> -->
     <div class="MiddleBox">
       <div v-if="!showSecondPart" class="FormBox">
         <div class="FormTitle">Daftar Organizer</div>
@@ -127,9 +126,6 @@
 </template>
 
 <script>
-// import bcrypt from 'bcryptjs';
-// import WebFooter from './WebFooter.vue';
-// import WebNavbar from './WebNavbar.vue';
 
 export default {
   name: 'EventRegisterOrganizer',
@@ -157,8 +153,35 @@ export default {
     };
   },
   methods: {
-    registerOrganizer() {
+    async registerOrganizer() {
       // eslint-disable-next-line no-console
+      try {
+        const body = {
+          name:this.form.firstName + ' ' + this.form.lastName,
+          email: this.form.email,
+          password: this.form.password,
+          establishYear: this.form.establishedYear,
+          contactNumber: this.form.contactNumber,
+          industry: this.form.industry,
+          address: this.form.address,
+          description: this.form.description,
+        }
+        console.log(body)
+        const response = await this.$axios.post('/api/auth/register/eo',body);
+        const userData = response.data;
+        // localStorage.setItem('userData', JSON.stringify(userData));
+        this.$emit('userRegisteredEO', userData);
+      } catch (error) {
+          console.error('Login error:', error);
+          if (error.response) {
+            console.error('Response data:', error.response.data);
+            console.error('Response status:', error.response.status);
+          } else if (error.request) {
+            console.error('No response received:', error.request);
+          } else {
+            console.error('Error setting up request:', error.message);
+          }
+      }
       console.log('Organizer registration form data:', this.form);
     },
     performSearch() {
@@ -259,7 +282,7 @@ font-size: 14px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  gap:20px
+  gap:0.5rem
 }
 .LeftColumn, .RightColumn {
   flex: 1;
