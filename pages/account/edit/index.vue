@@ -6,12 +6,12 @@
           <p class="h3 title">Akun</p>
         </div>
         <div class="col-sm-3">
-          <button v-if="isUser || isEO" class="btn_cancel">Cancel</button>
-          <button v-if="isUser || isEO" class="btn_save">Simpan</button>
+          <button v-if="user == 1 || user == 2" class="btn_cancel">Cancel</button>
+          <button v-if="user == 1 || user == 2" class="btn_save">Simpan</button>
         </div>
       </div>
       <hr>
-      <form v-if="isUser">
+      <form v-if="user == 1">
         <div class="row mt-4">
           <div class="col">
             <!-- Image -->
@@ -20,7 +20,7 @@
           <div class="col">
             <div class="form-group">
               <b>Nama Depan</b>
-              <input v-model=account.firstname class='form-control'>
+              <input v-model=account.name class='form-control'>
             </div>
             <div class="form-group">
               <b>Nama Belakang</b>
@@ -47,7 +47,7 @@
           </div>
         </div>
       </form>
-      <form v-if="isEO">
+      <form v-if="user == 2">
         <div v-if="isEO" class="row mt-4">
           <div class="col-3"></div>
           <div class="col-9">
@@ -110,9 +110,7 @@
 export default {
   data() {
     return {
-      isUser: 0,
-      isAdmin: 0,
-      isEO: 1,
+      user: 0,
       account: {
         'firstname': 'Kevin',
         'lastname' : 'Santiago',
@@ -133,6 +131,23 @@ export default {
         'newpassword':'',
         'confirmpassword':''
       },
+    }
+  },
+  fetch(){
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    this.account = userData
+    if (this.account.role === 'customer') {
+      this.user = 1
+    } else if (this.account.role === 'eo') {
+      this.user = 2
+    } else if (this.account.role === 'admin') {
+      this.user = 3
+    }
+  },
+  fetchOnServer: false,
+  methods: {
+    goToEdit(){
+      this.$router.push('/account/edit');
     }
   },
 }

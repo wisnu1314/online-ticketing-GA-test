@@ -5,8 +5,8 @@
     <div class="d-flex event_desc">
       <div class="col_desc">
         <div>
-          <p class="title">Atma Asta 2023 : Reinerva</p>
-          <p><strong>"Step to liberty, Leap into victory". REINERVA is an encouragement for people to reach peace and liberty.</strong></p>
+          <p class="title">{{events.eventTitle}}</p>
+          <p><strong>{{events.subTitle }}</strong></p>
         </div>
         <div>
           <!-- image -->
@@ -21,18 +21,15 @@
         <p class="h5">Lokasi</p>
         <div>
           <b-icon-geo-alt></b-icon-geo-alt>
-          <span class="ml-2">Pusat Kesenjataan Infanteri (Pussenif), Jalan Supratman No 60, Kota Bandung</span>
+          <span class="ml-2">{{ events.location }}</span>
         </div>
         <p class="h5">Tentang event ini</p>
         <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eu pharetra sem. Mauris efficitur, urna vitae congue posuere, libero libero viverra mauris, quis tincidunt sem lectus gravida lacus. Etiam ac eros vehicula, malesuada velit consectetur, pretium nulla. Interdum et malesuada fames ac ante ipsum primis in faucibus. Praesent a lectus egestas lectus commodo tincidunt sed non neque. Maecenas faucibus ipsum ac maximus luctus. Nulla posuere malesuada dictum. Sed ullamcorper purus ut interdum sagittis. Aliquam erat volutpat.
-          Cras eu lobortis nulla. Vivamus ornare nisl ante. In porttitor placerat lacus eu bibendum. Vivamus imperdiet sollicitudin felis nec ornare. Vestibulum fringilla est sagittis, pharetra magna sed, malesuada enim. Aenean fringilla ligula felis, et malesuada ligula blandit ut. Maecenas ac vulputate lectus. Sed sed nisi mauris. Vestibulum id pellentesque arcu, in porta libero. Nunc sed pharetra urna, eu varius augue. Ut id fringilla arcu.
-          Aenean in ligula ut dui accumsan luctus et tincidunt lorem. Quisque id nibh elementum, tempor mi ut, ullamcorper sapien. Nullam faucibus enim velit, vel aliquam risus fringilla ut. Curabitur eu sollicitudin ante. Aliquam ipsum risus, suscipit viverra lorem vitae, ultrices viverra nisi. Quisque aliquam orci eros, sit amet mattis turpis eleifend non. Etiam facilisis urna at feugiat sodales.
-          Pellentesque nec gravida justo. Integer auctor enim at dui consequat sodales. Sed finibus ornare nibh, non eleifend urna rhoncus ac. Praesent eget neque ut dui dignissim cursus. Aenean in ligula ut justo fermentum luctus ac non eros. Donec venenatis neque ultricies elit semper, sit amet volutpat massa eleifend. Sed justo mauris, pretium ac nulla sit amet, auctor dictum justo.
+          {{ promotionalContent.description }}
         </p>
         <p class="h5">Tags</p>
         <div class="d-flex">
-          <button class="mr-3 btn_tags" v-for="(tag, index) in tags" :key="index"> {{ tag }}</button>
+          <button class="mr-3 btn_tags" v-for="(tag, index) in promotionalContent.tags" :key="index"> {{ tag }}</button>
         </div>
         <p class="h5">Informasi Organizer</p>
         <div class="info_org">
@@ -41,17 +38,74 @@
             <div class="org">
               <ul>
                 <li class="org_name">OSIS SMAN 8 BDG</li>
-                <li class="org_detail">est. 1968</li>
+                <li class="org_detail">est. {{ organizer.establishYear }}</li>
               </ul>
             </div>
           </div>
-          <p class="mt-3">SMA Negeri 8 Bandung, merupakan salah satu Sekolah Menengah Atas Negeri di Kota Bandung, beralamat di Jl. Solontongan No.3, Kelurahan Turangga, Kecamatan Lengkong, Kota Bandung, Jawa Barat</p>
+          <p class="mt-3">{{ organizer.description }}</p>
         </div>
       </div>
       <div class="event_price">
-        <p class="h5 mb-4">Rp0 - Rp1.000.000</p>
-        <button>Pesan Tiket</button>
+        <p class="h5 mb-4">Rp{{ categories[categories.length-1]?.pricePerTicket }} - Rp{{ categories[0]?.pricePerTicket}}</p>
+        <b-button  v-b-modal.modal-1 v-if="user==1">Pesan Tiket</b-button>
+        <b-button v-b-modal.modal-2 variant="outline-danger" v-if="user==2" class="mt-2 bg-white text-danger">Hapus Event Ini</b-button>
       </div>
+    </div>
+    <div>
+      <b-modal v-if="user==1" id="modal-1" size="xl" :title=events.eventTitle hide-footer>
+        <b-row>
+          <b-col sm="7">
+            <div v-for="(category,index) in categories" :key="index">
+              <b-row>
+                <b-col sm="4">
+                  <label>{{ category.categoryName }}</label>
+                </b-col>
+                <b-col sm="8">
+                  <b-form-input v-model="detail[index].totalTickets" type="number" min="0" @input="detail[index].totalPrice = detail[index].totalTickets * detail[index].pricePerTicket"></b-form-input>
+                </b-col>
+              </b-row>
+            </div>
+          </b-col>
+          <b-col sm="5">
+            <p><strong>Detail Pembayaran</strong></p>
+            <b-row v-for="(det,index) in detail" :key="index">
+              <b-col sm="6">
+                <p>{{ det.totalTickets }} x {{ det.categoryName }}</p>
+              </b-col>
+              <b-col sm="6">
+                <p>Rp{{ det.totalPrice }}</p>
+              </b-col>
+            </b-row>
+            <b-row>
+              <b-col sm="6">
+                <p><strong>TOTAL</strong></p>
+              </b-col>
+              <b-col sm="6">
+                <p><strong>Rp {{ detail.reduce((accum,item) => accum + item.totalPrice, 0) }}</strong></p>
+              </b-col>
+            </b-row>
+            <b-button @click="submitOrder()">Pesan</b-button>
+          </b-col>
+        </b-row>
+      </b-modal>
+    </div>
+    <div>
+      <b-modal id="modal-2" v-if="user==2">
+        <p><strong>Apakah Anda yakin ingin menghapus event ini?</strong></p>
+        <p>Periksa kembali detail event-nya dan pastikan bahwa event yang akan dihapus adalah event yang benar.</p>
+        <template #modal-footer>
+        <div class="w-100">
+          <b-button
+            variant="danger"
+            size="md"
+            class="float-right"
+            @click="deleteEvent()"
+          >
+            Delete
+          </b-button>
+        </div>
+      </template>
+      </b-modal>
     </div>
   </div>
 </template>
@@ -61,7 +115,78 @@ export default {
   layout: 'default',
   data() {
     return {
-      tags: ['Musik', 'Konser Musik']
+      user: 0,
+      events:[],
+      promotionalContent: [],
+      categories: [],
+      organizer: [],
+      detail: [],
+      submitDetail: []
+    }
+  },
+  async fetch(){
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    if (userData.role === 'customer') {
+        this.user = 1
+      } else if (userData.role === 'eo') {
+        this.user = 2
+      } else if (userData.role === 'admin') {
+        this.user = 3
+      }
+    const bearerToken = userData?.token;
+    await this.$axios(`/api/events/${this.$route.params.id}`,{
+      headers: {
+        'Authorization': `Bearer ${bearerToken}`
+      }
+    })
+    .then(res => {
+      this.events = Object.freeze(res.data.data.event)
+      this.promotionalContent = this.events.promotionalContent
+      this.categories = Object.freeze(this.events.tickets)
+      this.organizer = res.data.data.organizer
+      this.categories.forEach(category =>{
+        this.detail.push(JSON.parse(JSON.stringify({
+          "categoryName": category.categoryName,
+          "totalTickets" : 0,
+          "pricePerTicket" : category.pricePerTicket
+        })))
+      })
+      this.detail.forEach(det=>{
+        det.totalPrice = det.pricePerTicket * det.totalTickets
+      })
+      console.log(this.detail);
+    })
+  },
+  fetchOnServer: false,
+  methods: {
+    async submitOrder(){
+      const userData = JSON.parse(localStorage.getItem('userData'));
+      const bearerToken = userData?.token;
+      this.detail.forEach(det=>{
+        if (det.totalTickets > 0) {
+          this.submitDetail.push({
+          "categoryName": det.categoryName,
+          "totalTickets" : det.totalTickets,
+          "totalPrice" : det.totalPrice
+          })
+        }
+      })
+      const response = await this.$axios.post(`/api/events/${this.$route.params.id}/purchase-tickets`,{"detail": this.submitDetail},{
+        headers: {
+        'Authorization': `Bearer ${bearerToken}`
+        }
+      })
+      alert(response)
+    },
+    async deleteEvent(){
+      const userData = JSON.parse(localStorage.getItem('userData'));
+      const bearerToken = userData?.token;
+      const response = await this.$axios.delete(`/api/events/${this.$route.params.id}`,{
+        headers: {
+        'Authorization': `Bearer ${bearerToken}`
+        }
+      })
+      alert(response)
     }
   },
 }
@@ -72,6 +197,7 @@ export default {
   padding-left: 15%;
   padding-right: 15%;
   padding-bottom: 30px;
+  padding-top: 30px;
 }
 
 .event p {
@@ -159,6 +285,7 @@ export default {
 }
 
 .col_desc {
+  min-width: 70%;
   max-width: 70%;
   padding-right: 40px;
 }

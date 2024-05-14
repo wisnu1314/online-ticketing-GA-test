@@ -1,6 +1,6 @@
 <template>
   <b-navbar class="Navbar" toggleable="lg" type="dark">
-    <b-navbar-brand href="#">Teecket</b-navbar-brand>
+    <b-navbar-brand href="/home">Teecket</b-navbar-brand>
     <b-form-group class="SearchBarContainer">
       <b-input-group>
         <b-form-input
@@ -41,7 +41,7 @@
             <b-dropdown-item @click="logout">Logout</b-dropdown-item>
           </b-dropdown>
         </div>
-        
+
       </template>
       <template v-else-if="isUserType('eo')">
         <b-nav-item href="#">Cari Event</b-nav-item>
@@ -69,7 +69,7 @@
             <b-dropdown-item @click="logout">Logout</b-dropdown-item>
           </b-dropdown>
         </div>
-      </template>    
+      </template>
       <template v-else-if="isUserType('admin')">
         <b-nav-item href="#">Cari Event</b-nav-item>
         <b-nav-item href="#">User Management</b-nav-item>
@@ -154,6 +154,7 @@ export default {
       }
     },
     navigateToProfile() {
+      this.$router.push('/account');
       // To be implemented
     },
     navigateToSubscription() {
@@ -171,7 +172,7 @@ export default {
       try {
         // Make API request to fetch user data
         const userData = JSON.parse(localStorage.getItem('userData'));
-        this.userData = userData; 
+        this.userData = userData;
         this.userType = userData?.role
         this.loggedIn = userData?.role === 'customer' || userData?.role=== 'eo' || userData?.role === 'admin'
       } catch (error) {
@@ -249,14 +250,14 @@ export default {
 
 .UserAvatarButton img {
   width: 40px;
-  height: 40px; 
+  height: 40px;
   border-radius: 50%;
 }
 .dropdown-menu {
     max-width: 16rem !important;
 }
 .b-dropdown-toggle {
-  display: none !important; 
+  display: none !important;
   visibility: hidden;
 }
 
@@ -268,7 +269,7 @@ export default {
 
 .AvatarContainer {
   width: 25%;
-  max-width: 50px; 
+  max-width: 50px;
 }
 
 .AvatarImage {
@@ -290,7 +291,7 @@ export default {
 }
 @media screen and (max-width: 768px) {
   .Navbar {
-    justify-content: space-between; 
+    justify-content: space-between;
   }
 }
 </style>

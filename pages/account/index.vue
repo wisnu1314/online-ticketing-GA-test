@@ -6,18 +6,18 @@
           <p class="h3 title">Akun</p>
         </div>
         <div class="col-sm-2">
-          <button v-if="isUser || isEO" class="btn_edit"><span class="mr-2"><b-icon-pencil-square></b-icon-pencil-square></span>Edit Akun</button>
+          <button v-if="user===1 || user === 2" class="btn_edit" @click="goToEdit()"><span class="mr-2"><b-icon-pencil-square></b-icon-pencil-square></span>Edit Akun</button>
         </div>
       </div>
       <hr>
-      <div v-if="isUser || isAdmin" class="row mt-4">
+      <div v-if="user === 1 || user === 3" class="row mt-4">
         <div class="col">
           <!-- Image -->
         </div>
         <div class="col">
           <div>
             <b>Nama Depan</b>
-            <p>{{account.firstname}}</p>
+            <p>{{account.name}}</p>
           </div>
           <div>
             <b>Nama Belakang</b>
@@ -31,16 +31,16 @@
         <div class="col">
           <div>
             <b>Tanggal Bergabung</b>
-            <p>{{ account.created }}</p>
+            <p>{{ account.createdAt }}</p>
           </div>
           <div>
             <b>Tanggal Terakhir Diperbarui</b>
-            <p>{{ account.lastUpdate }}</p>
+            <p>{{ account.updatedAt }}</p>
           </div>
         </div>
         <div class="col"></div>
       </div>
-      <div v-if="isEO" class="row mt-4">
+      <div v-if="user==2" class="row mt-4">
         <div class="col-3"></div>
         <div class="col-9">
           <div class="row col">
@@ -102,16 +102,8 @@
 export default {
   data() {
     return {
-      isUser: 0,
-      isAdmin: 0,
-      isEO: 1,
-      account: {
-        'firstname': 'Kevin',
-        'lastname' : 'Santiago',
-        'email': 'kevinn26@gmail.com',
-        'created': '14/10/2023 15.00 GMT+7',
-        'lastUpdate': '15/10/2023 15.00 GMT+7'
-      },
+      user: 0,
+      account: [],
       data_eo: {
         'name': 'OSIS SMAN 8 BDG',
         'email': 'osissman8bdg@gmail.com',
@@ -124,6 +116,23 @@ export default {
         'kuota': '4',
         'description': 'SMA Negeri 8 Bandung, merupakan salah satu Sekolah Menengah Atas Negeri di Kota Bandung, beralamat di Jl. Solontongan No.3, Kelurahan Turangga, Kecamatan Lengkong, Kota Bandung, Jawa Barat'
       }
+    }
+  },
+  fetch(){
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    this.account = userData
+    if (this.account.role === 'customer') {
+      this.user = 1
+    } else if (this.account.role === 'eo') {
+      this.user = 2
+    } else if (this.account.role === 'admin') {
+      this.user = 3
+    }
+  },
+  fetchOnServer: false,
+  methods: {
+    goToEdit(){
+      this.$router.push('/account/edit');
     }
   },
 }

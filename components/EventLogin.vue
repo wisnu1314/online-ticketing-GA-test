@@ -80,7 +80,7 @@ export default {
         // const response = await this.$axios.get('/api/health');
         const userData = response.data;
         const userDataToStore = Object.fromEntries(
-        Object.entries(userData.data).filter(([key]) => key !== 'password' && key !== 'token'));
+        Object.entries(userData.data).filter(([key]) => key !== 'password'));
         localStorage.setItem('userData', JSON.stringify(userDataToStore));
         this.$emit('userLoggedIn', userData);
       } catch (error) {
