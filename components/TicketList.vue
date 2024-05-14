@@ -17,6 +17,7 @@
             </div>
             <div v-if="tickets.length === 0" class="noTickets">Tidak ada tiket yang tersedia.</div>
             <div v-for="(ticket, index) in tickets" :key="ticket._id" class="ticketCard">
+                <router-link :to="{ name: 'ticket-detail', params: { id: ticket._id } }"></router-link>
                 <div class="ticketCardHeader">
                     <img :src="imageUrls[index]" alt="Event Image" class="eventImage"/>
                     <div class="ticketCardInfo">
@@ -41,7 +42,6 @@
                 </div>
             </div>
         </div>
-        <!-- Pagination -->
         <b-pagination v-model="currentPage" :total-rows="totalTickets" :per-page="perPage" @change="loadTickets" />
         </div>
     </div>

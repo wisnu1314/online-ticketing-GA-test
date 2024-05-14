@@ -50,10 +50,12 @@
       </div>
       <div class="event_price">
         <p class="h5 mb-4">Rp0 - Rp1.000.000</p>
-        <button>Pesan Tiket</button>
+        <button @click="edit">Pesan Tiket</button>
       </div>
     </div>
+    <NuxtChild />
   </div>
+  
 </template>
 
 <script>
@@ -64,6 +66,12 @@ export default {
       tags: ['Musik', 'Konser Musik']
     }
   },
+  methods:{
+    edit(){
+      const eventId = this.$route.params.id;
+      this.$router.push(`/events/${eventId}/editEvent`);
+    },
+  }
 }
 </script>
 
