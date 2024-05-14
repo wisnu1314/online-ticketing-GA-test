@@ -60,10 +60,6 @@
   
   export default {
     name: 'EventRegisterUser',
-    components: {
-      // WebFooter,
-      // WebNavbar,
-    },
     data() {
       return {
         isLoggedIn: false,
@@ -91,6 +87,7 @@
         const userData = response.data;
         // localStorage.setItem('userData', JSON.stringify(userData));
         this.$emit('userRegistered', userData);
+        this.$router.push('/loginPage');
       } catch (error) {
           console.error('Login error:', error);
           if (error.response) {

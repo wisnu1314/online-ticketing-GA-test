@@ -56,6 +56,7 @@
   background-color: #035037;
   justify-content: space-around;
   align-items: center;
+  margin-top:0.5rem;
 }
 .LeftFooter{
   display: flex;

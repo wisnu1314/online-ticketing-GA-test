@@ -161,9 +161,9 @@ export default {
           email: this.form.email,
           password: this.form.password,
           establishYear: this.form.establishedYear,
-          contactNumber: this.form.contactNumber,
+          contactNumber: this.form.orgPhone,
           industry: this.form.industry,
-          address: this.form.address,
+          address: this.form.orgAddress,
           description: this.form.description,
         }
         console.log(body)
@@ -171,6 +171,7 @@ export default {
         const userData = response.data;
         // localStorage.setItem('userData', JSON.stringify(userData));
         this.$emit('userRegisteredEO', userData);
+        this.$router.push('/loginPage');
       } catch (error) {
           console.error('Login error:', error);
           if (error.response) {

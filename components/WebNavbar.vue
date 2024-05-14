@@ -12,7 +12,7 @@
         />
       </b-input-group>
     </b-form-group>
-    <b-navbar-nav v-if="!isUserLoggedIn" class="RightNavigation">
+    <b-navbar-nav v-if="!isUserLoggedIn" class="RightNavigation" toggleable="sm">
       <b-nav-item href="#">Cari Event</b-nav-item>
       <b-nav-item href="/registerOrganizerPage">Menjadi Organizer</b-nav-item>
       <b-button class="NavButton" href="/loginPage">Masuk</b-button>
@@ -146,7 +146,7 @@ export default {
       if(this.isUserType('customer')){
         this.$refs.profileDropdown1?.show();
       }
-      if(this.isUserType('organizer')){
+      if(this.isUserType('eo')){
         this.$refs.profileDropdown2?.show();
       }
       if(this.isUserType('admin')){
@@ -206,6 +206,7 @@ export default {
   margin-top: 1rem;
   border-radius: 5px;
   background-color: white;
+  /* flex-grow: 1; */
 }
 
 .SearchBar {
@@ -214,6 +215,7 @@ export default {
   padding: 9px 4px 9px 40px;
   border-radius: 5px;
   background: transparent url("/search.svg") no-repeat 13px;
+  flex-grow: 1;
 }
 
 /* Right navigation */
@@ -288,9 +290,17 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+@media screen and (max-width: 1024px) {
+  .SearchBarContainer {
+    display: none; /* Hide search bar on smaller screens */
+  }
+}
 @media screen and (max-width: 768px) {
   .Navbar {
     justify-content: space-between; 
+  }
+  .RightNavigation {
+    gap: 5px; /* Adjust spacing between navigation items */
   }
 }
 </style>
