@@ -1,11 +1,13 @@
 <!-- eslint-disable vue/no-v-html -->
 <template>
     <div >
-      <div 
-        class="CoverImage" 
-        :style="{ backgroundImage: `url(${getImageUrl()} )` }"
-      >
-      </div>
+      <div class="CoverImageWrapper">
+        <img
+          class="CoverImage"
+          :src="getImageUrl()"
+          alt="Event Cover Image"
+        />
+    </div>
       <div class="TopPreview">
         <div class="TitleBox">
           <h3>{{ formattedDate }}</h3>
@@ -111,8 +113,10 @@
         }
       },
       getImageUrl() {
+        
         return this.$props.formData.promotionalContent.posterImageUrl === '' ? 
-          'https://img.freepik.com/free-photo/painting-mountain-lake-with-mountain-background_188544-9126.jpg' :  this.$props.formData.promotionalContent.posterImageUrl;
+          'https://img.freepik.com/free-photo/painting-mountain-lake-with-mountain-background_188544-9126.jpg' 
+          :  `${this.$props.formData.promotionalContent.posterImageUrl}`;
       },
       formatPrice(price) {
         return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -146,7 +150,7 @@
 .PriceRangeContainer {
     display: flex;
     justify-content: center;
-    align-items: center; /* Center horizontally and vertically */
+    align-items: center; 
 }
 .PreviewTicketButton{
     width:90%;
@@ -154,16 +158,27 @@
     background-color: #035037;
     color: white;
     cursor:none;
+    pointer-events: none;
     font-size: 0.75rem;
 }
-.CoverImage{
-    width: 100%;
-    height: 22.5rem;
-    max-height: 40rem;
-    border-radius: 1rem;
-    margin-bottom: 0.5rem;
-    background-size: cover; 
-    background-position: center;
+.CoverImageWrapper {
+  width: 100%;
+  height: 22.5rem;
+  max-height: 40rem;
+  border-radius: 1rem;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f0f0;
+}
+
+.CoverImageWrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; 
+  border-radius: 1rem;
 }
 .ContentBox{
     display: flex;

@@ -146,7 +146,7 @@ export default {
       if(this.isUserType('customer')){
         this.$refs.profileDropdown1?.show();
       }
-      if(this.isUserType('organizer')){
+      if(this.isUserType('eo')){
         this.$refs.profileDropdown2?.show();
       }
       if(this.isUserType('admin')){

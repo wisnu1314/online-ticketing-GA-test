@@ -87,6 +87,7 @@
         const userData = response.data;
         // localStorage.setItem('userData', JSON.stringify(userData));
         this.$emit('userRegistered', userData);
+        this.$router.push('/loginPage');
       } catch (error) {
           console.error('Login error:', error);
           if (error.response) {
