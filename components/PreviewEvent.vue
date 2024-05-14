@@ -162,16 +162,16 @@
     font-size: 0.75rem;
 }
 .CoverImageWrapper {
-  width: 100%;
-  height: 22.5rem;
-  max-height: 40rem;
-  border-radius: 1rem;
-  overflow: hidden;
-  margin-bottom: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #f0f0f0;
+    width: 100%;
+    height: 22.5rem;
+    max-height: 40rem;
+    border-radius: 1rem;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f0f0;
 }
 
 .CoverImageWrapper img {

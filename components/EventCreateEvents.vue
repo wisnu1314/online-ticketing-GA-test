@@ -159,7 +159,6 @@ export default {
         PreviewEvent,
     },
     data() {
-        
         return {
             eventform: {
                 eventTitle:  '',
@@ -171,7 +170,7 @@ export default {
                     {
                         categoryName:'Nama Tiket',
                         totalTickets:1,
-                        pricePerTicket:0,
+                        pricePerTicket:1,
                     },
                 ],
                 promotionalContent:{
@@ -181,7 +180,7 @@ export default {
                 },
             },
             selectedTags:"",
-            chances: 4,
+            chances: 1,
             showForm:true,
             generatedContent:'',
             uploadedFile:null,
@@ -195,7 +194,6 @@ export default {
         remainingChances() {
             console.log("remaining", this.chances)
             return this.chances;
-        
         }
     },
     watch: {
@@ -205,8 +203,12 @@ export default {
         'eventform.endDate'(newValue, oldValue) {
             this.checkTimeValidity();
         },
-},
+    },
+    mounted(){
+        this.loadUserData()
+    },
     created() {
+        
         if(this.$config.axios.baseURL.endsWith('/')){
             this.baseURL = this.$config.axios.baseURL.substring(0, this.$config.axios.baseURL.length - 1);
         }
@@ -215,6 +217,12 @@ export default {
         }
     },
     methods:{
+        loadUserData() {
+            const userData = JSON.parse(localStorage.getItem('userData'));
+            if (userData && userData.gptAccessTokenQuota !== undefined) {
+                this.chances = userData.gptAccessTokenQuota;
+            }
+        },
         checkTimeValidity() {
             if (new Date(this.eventform.startDate) >= new Date(this.eventform.endDate)) {
                 alert("Waktu Mulai harus lebih awal dari Waktu Selesai.");
@@ -227,7 +235,7 @@ export default {
             this.eventform.tickets.push({
                 categoryName:'Nama Tiket',
                 totalTickets:1,
-                pricePerTicket:0,
+                pricePerTicket:1,
             })
         },
         removeTicketCategory(index) {

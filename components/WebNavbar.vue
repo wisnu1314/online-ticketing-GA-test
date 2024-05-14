@@ -20,7 +20,7 @@
     <b-navbar-nav v-if="isUserLoggedIn" class="RightNavigation">
       <template v-if="isUserType('customer')">
         <b-nav-item href="#">Cari Event</b-nav-item>
-        <b-nav-item href="#">My Tickets</b-nav-item>
+        <b-nav-item href="/myTickets">My Tickets</b-nav-item>
         <div class="UserAvatarButton" @click="openDropdown">
           <img src="https://iili.io/Jk1PRV4.jpg" class="UserAvatar" />
           <b-dropdown ref="profileDropdown1" variant="link" no-caret right>
@@ -161,6 +161,7 @@ export default {
     },
     logout() {
       localStorage.removeItem('userData');
+      this.toggleDropdown()
       this.$router.push('/loginPage');
       this.$emit('userLoggedOut');
     },
