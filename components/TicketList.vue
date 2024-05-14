@@ -1,32 +1,49 @@
 <template>
-    <div class="ticketList">
-      <div v-for="(ticket, index) in tickets" :key="ticket._id" class="ticketCard">
-        <div class="ticketCardHeader">
-          <img :src="imageUrls[index]" alt="Event Image" class="eventImage"/>
-          <div class="ticketCardInfo">
-            <h3>{{ ticket.eventTitle }}</h3>
-            <p class="LocationDetail">
-                {{ ticket.eventLocation }} | {{ formattedDateTime(ticket) }}
-            </p>
-            
-          </div>
-        </div>
-        <div class="ticketCardDetails">
-            <div class="status" :class="statusClass(ticket.status)">{{ ticket.status === 'active' ? 'Aktif' : 'Selesai' }}</div>
-            <div class="categoryAndPrice">
-                <p>
-                    <span v-for="category in ticket.category" :key="category._id">
-                        {{ category.categoryName }} x {{ category.totalTickets }},
-                    </span>
-                </p>
-                <div class="totalPrice">
-                    Rp{{ formattedPrice(ticket.category.reduce((acc, category) => acc + category.totalPrice, 0)) }}
+    <div class="ticketListWrapper">
+        <div class="ticketList">
+            <div class="filter">
+                <label>
+                    <input v-model="selectedStatus" type="radio" value="all" @change="loadTickets" />
+                    Semua
+                </label>
+                <label>
+                    <input v-model="selectedStatus" type="radio" value="active" @change="loadTickets" />
+                    Aktif
+                </label>
+                <label>
+                    <input v-model="selectedStatus" type="radio" value="done" @change="loadTickets" />
+                    Selesai
+                </label>
+            </div>
+            <div v-if="tickets.length === 0" class="noTickets">Tidak ada tiket yang tersedia.</div>
+            <div v-for="(ticket, index) in tickets" :key="ticket._id" class="ticketCard">
+                <div class="ticketCardHeader">
+                    <img :src="imageUrls[index]" alt="Event Image" class="eventImage"/>
+                    <div class="ticketCardInfo">
+                        <h3>{{ ticket.eventTitle }}</h3>
+                        <p class="LocationDetail">
+                            {{ ticket.eventLocation }} | {{ formattedDateTime(ticket) }}
+                        </p>
+                        
+                    </div>
+                </div>
+            <div class="ticketCardDetails">
+                <div class="status" :class="statusClass(ticket.status)">{{ ticket.status === 'active' ? 'Aktif' : 'Selesai' }}</div>
+                <div class="categoryAndPrice">
+                    <p>
+                        <span v-for="category in ticket.category" :key="category._id">
+                            {{ category.categoryName }} x {{ category.totalTickets }},
+                        </span>
+                    </p>
+                    <div class="totalPrice">
+                        Rp{{ formattedPrice(ticket.category.reduce((acc, category) => acc + category.totalPrice, 0)) }}
+                    </div>
                 </div>
             </div>
         </div>
-      </div>
-      <!-- Pagination -->
-      <b-pagination v-model="currentPage" :total-rows="totalTickets" :per-page="perPage" @change="loadTickets" />
+        <!-- Pagination -->
+        <b-pagination v-model="currentPage" :total-rows="totalTickets" :per-page="perPage" @change="loadTickets" />
+        </div>
     </div>
   </template>
   
@@ -35,83 +52,32 @@
     name: 'TicketList',
     data() {
       return {
-        tickets: [
-          {
-            "_id": "663e1cb4bffb61d99bdf6d88",
-            "eventId": "6641e48fd05e3b8c46eff7bd",
-            "eventStartDate": "2024-06-29T12:00:00.000Z",
-            "eventEndDate": "2024-07-01T22:00:00.000Z",
-            "eventLocation": "Central Park 1",
-            "eventTitle": "Slow Music Season 1",
-            "eventSubTitle": "The biggest sport",
-            "userId": "6628e8e07ff2751e1f18b21c",
-            "category": [
-              {
-                "categoryName": "VIP",
-                "totalTickets": 2,
-                "totalPrice": 290,
-                "_id": "663e1cb4bffb61d99bdf6d89"
-              },
-              {
-                "categoryName": "General Admission",
-                "totalTickets": 1,
-                "totalPrice": 950,
-                "_id": "663e1cb4bffb61d99bdf6d8a"
-              }
-            ],
-            "status": "inactive",
-            "createdAt": "2024-05-10T13:10:12.535Z",
-            "updatedAt": "2024-05-10T13:10:12.535Z",
-            "__v": 0,
-             // Add your event image URL here
-          },
-          {
-            "_id": "663e1cb4bffb61d99bdf6d88",
-            "eventId": "6641e48fd05e3b8c46eff7bd",
-            "eventStartDate": "2024-06-29T12:00:00.000Z",
-            "eventEndDate": "2024-07-01T22:00:00.000Z",
-            "eventLocation": "Central Park 1",
-            "eventTitle": "Slow Music Season 1",
-            "eventSubTitle": "The biggest sport",
-            "userId": "6628e8e07ff2751e1f18b21c",
-            "category": [
-              {
-                "categoryName": "VVIP",
-                "totalTickets": 10,
-                "totalPrice": 2000,
-                "_id": "663e1cb4bffb61d99bdf6d89"
-              },
-              {
-                "categoryName": "General Admission",
-                "totalTickets": 1,
-                "totalPrice": 22950,
-                "_id": "663e1cb4bffb61d99bdf6d8a"
-              }
-            ],
-            "status": "active",
-            "createdAt": "2024-05-10T13:10:12.535Z",
-            "updatedAt": "2024-05-10T13:10:12.535Z",
-            "__v": 0,
-             // Add your event image URL here
-          }
-        ],
+        tickets: [],
         currentPage: 1,
         perPage: 10,
         totalTickets: 0,
         imageUrls:[],
+        selectedStatus:'all',
       };
     },
     mounted(){
-        this.fetchImageUrls();
+        this.loadTickets();
     },
     methods: {
       async loadTickets() {
         try {
-          const response = await this.$axios.get(`/api/tickets?page=${this.currentPage}&perPage=${this.perPage}`);
-          
-          this.tickets = response.data.data.tickets;
-          this.totalTickets = response.data.data.totalTickets;
-          await this.fetchImageUrls();
+            console.log('selected', this.selectedStatus)
+            const userData = JSON.parse(localStorage.getItem('userData'));
+            const bearerToken = userData?.token;
+            const statusFilter = this.selectedStatus === 'all' ? '' : `&status=${this.selectedStatus}`;
+            const response = await this.$axios.get(`/api/tickets?page=${this.currentPage}&limit=${this.perPage}${statusFilter}`,{
+                headers: {
+                    'Authorization': `Bearer ${bearerToken}`,
+                },
+            });
+            this.tickets = response.data.data.tickets;
+            this.totalTickets = response.data.data.totalTickets;
+            await this.fetchImageUrls();
         } catch (error) {
           console.error('Error loading tickets:', error);
         }
@@ -124,7 +90,7 @@
             try {
             const response = await this.$axios.get(`/api/events/${ticket.eventId}`, {
                 headers: {
-                'Authorization': `Bearer ${bearerToken}`,
+                    'Authorization': `Bearer ${bearerToken}`,
                 },
             });
 
@@ -175,6 +141,15 @@
   </script>
   
 <style>
+.ticketListWrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 65vh;
+}
+.noTickets {
+  font-size: 1.2rem;
+  color: #555;
+}
 .ticketList {
     display: flex;
     flex-wrap: wrap;
@@ -277,5 +252,15 @@ p, h3 {
 .LocationDetail{
     color: #959595;
 }
+.filter {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.filter label {
+  margin-right: 1rem;
+}
+
   </style>
   
