@@ -9,51 +9,90 @@
       </div>
     </div>
     <div id="subs_field" class="d-flex subs mb-4 field">
-      <div class="box_plan">
-        <p class="title_plan">Basic</p>
-        <div class="d-flex pricetag">
-          <p class="price">Rp25.000</p>
-          <p class="disc">-15%</p>
+      <div v-for="(pack, index) in packages" :key="index">
+        <div v-if="index%2 == 0" class="box_plan">
+          <p class="title_plan">{{ pack.name }}</p>
+          <div class="d-flex pricetag">
+            <p class="price">Rp{{ pack.price }}</p>
+            <!-- <p class="disc">-15%</p> -->
+          </div>
+          <p class="target" style="font-size: 12px;">per {{pack.totalToken}}x prompt/akun</p>
+          <p class="sz_14"><strong>{{pack.description}}</strong></p>
+          <div class="d-flex">
+            <b-icon-check class="check_white"></b-icon-check>
+            <p class="sz_14">Dapatkan {{pack.totalToken}}x auto-generate deskripsi event</p>
+          </div>
+          <button class="button_white" @click="buySubscription(pack._id)">Beli</button>
         </div>
-        <p class="target" style="font-size: 12px;">per 10x prompt/akun</p>
-        <p class="sz_14"><strong>Untuk Organizer Kecil</strong></p>
-        <div class="d-flex">
-          <b-icon-check class="check_white"></b-icon-check>
-          <p class="sz_14">Dapatkan 10x auto-generate deskripsi event</p>
+        <div v-else class="box_plan box_green">
+          <p class="title_plan">{{ pack.name }}</p>
+          <div class="d-flex pricetag">
+            <p class="price">Rp{{ pack.price }}</p>
+            <!-- <p class="disc bg_green">-15%</p> -->
+          </div>
+          <p class="target" style="font-size: 12px;">per {{pack.totalToken}}x prompt/akun</p>
+          <p class="sz_14"><strong>{{pack.description}}</strong></p>
+          <div class="d-flex">
+            <b-icon-check class="check_green"></b-icon-check>
+            <p class="sz_14">Dapatkan {{pack.totalToken}}x auto-generate deskripsi event</p>
+          </div>
+          <button class="button_white bg-white" @click="buySubscription(pack._id)">Beli</button>
         </div>
-        <button class="button_white">Beli</button>
       </div>
-      <div class="box_plan box_green">
-        <p class="title_plan">Pro</p>
-        <div class="d-flex pricetag">
-          <p class="price">Rp25.000</p>
-          <p class="disc bg_green">-15%</p>
-        </div>
-        <p class="target" style="font-size: 12px;">per 10x prompt/akun</p>
-        <p class="sz_14"><strong>Untuk Organizer Kecil</strong></p>
-        <div class="d-flex">
-          <b-icon-check class="check_green"></b-icon-check>
-          <p class="sz_14">Dapatkan 10x auto-generate deskripsi event</p>
-        </div>
-        <button class="button_white bg-white">Beli</button>
-      </div>
-      <div class="box_plan">
-        <p class="title_plan">Basic</p>
-        <div class="d-flex pricetag">
-          <p class="price">Rp25.000</p>
-          <p class="disc">-15%</p>
-        </div>
-        <p class="target" style="font-size: 12px;">per 10x prompt/akun</p>
-        <p class="sz_14"><strong>Untuk Organizer Kecil</strong></p>
-        <div class="d-flex">
-          <b-icon-check class="check_white"></b-icon-check>
-          <p class="sz_14">Dapatkan 10x auto-generate deskripsi event</p>
-        </div>
-        <button class="button_white">Beli</button>
-      </div>
+    </div>
+    <div>
+      <b-modal ref="modal-sukses" centered>
+        <h3>Pembayaran Sukses</h3>
+      </b-modal>
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+      packages: []
+    }
+  },
+  async fetch(){
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    if (userData.role === 'customer') {
+        this.user = 1
+      } else if (userData.role === 'eo') {
+        this.user = 2
+      } else if (userData.role === 'admin') {
+        this.user = 3
+      }
+    const bearerToken = userData?.token;
+    await this.$axios(`/api/packages`,{
+      headers: {
+        'Authorization': `Bearer ${bearerToken}`
+      }
+    })
+    .then(res => {
+      this.packages = res.data.data
+    })
+  },
+  fetchOnServer: false,
+  methods: {
+    buySubscription(subsId){
+      const userData = JSON.parse(localStorage.getItem('userData'));
+      const subs = {
+          "userId": userData.userId,
+          "packageId": subsId,
+      }
+      this.$axios.post(`/api/purchases`,subs, {
+        headers: {
+        'Authorization': `Bearer ${userData?.token}`
+        }
+      }).then(res=>{
+        this.$refs['modal-sukses'].show()
+      })
+    }
+  },
+}
+</script>
 
 <style scoped>
 .jumbotron {

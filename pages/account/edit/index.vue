@@ -7,7 +7,7 @@
         </div>
         <div class="col-sm-3">
           <button v-if="user == 1 || user == 2" class="btn_cancel">Cancel</button>
-          <button v-if="user == 1 || user == 2" class="btn_save">Simpan</button>
+          <button @click="saveUpdate()" v-if="user == 1 || user == 2" class="btn_save">Simpan</button>
         </div>
       </div>
       <hr>
@@ -103,6 +103,7 @@
         </div>
       </form>
     </div>
+    {{ account }}
   </div>
 </template>
 
@@ -111,14 +112,6 @@ export default {
   data() {
     return {
       user: 0,
-      account: {
-        'firstname': 'Kevin',
-        'lastname' : 'Santiago',
-        'email': 'kevinn26@gmail.com',
-        'oldpassword':'',
-        'newpassword':'',
-        'confirmpassword':''
-      },
       data_eo: {
         'name': 'OSIS SMAN 8 BDG',
         'email': 'osissman8bdg@gmail.com',
@@ -148,6 +141,28 @@ export default {
   methods: {
     goToEdit(){
       this.$router.push('/account/edit');
+    },
+    saveUpdate(){
+      const user = {
+          "userId": this.account.userId,
+          "name": this.account.name,
+          "email": this.account.email,
+          "profilePictureUrl": "http://google.com"
+      }
+      if (user === 1) {
+        this.$axios.put(`/api/profile/customer/update`,user,{
+          headers: {
+          'Authorization': `Bearer ${this.account.token}`
+          }
+        })
+      } else if (user === 2){
+        this.$axios.put(`/api/profile/eo/update`,user,{
+          headers: {
+          'Authorization': `Bearer ${this.account.token}`
+          }
+        })
+      }
+
     }
   },
 }

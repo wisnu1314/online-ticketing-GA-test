@@ -13,13 +13,13 @@
       </b-input-group>
     </b-form-group>
     <b-navbar-nav v-if="!isUserLoggedIn" class="RightNavigation" toggleable="sm">
-      <b-nav-item href="#">Cari Event</b-nav-item>
+      <b-nav-item href="/events/list">Cari Event</b-nav-item>
       <b-nav-item href="/registerOrganizerPage">Menjadi Organizer</b-nav-item>
       <b-button class="NavButton" href="/loginPage">Masuk</b-button>
     </b-navbar-nav>
     <b-navbar-nav v-if="isUserLoggedIn" class="RightNavigation">
       <template v-if="isUserType('customer')">
-        <b-nav-item href="#">Cari Event</b-nav-item>
+        <b-nav-item href="/events/list">Cari Event</b-nav-item>
         <b-nav-item href="#">My Tickets</b-nav-item>
         <div class="UserAvatarButton" @click="openDropdown">
           <img src="https://iili.io/Jk1PRV4.jpg" class="UserAvatar" />
@@ -44,8 +44,7 @@
 
       </template>
       <template v-else-if="isUserType('eo')">
-        <b-nav-item href="#">Cari Event</b-nav-item>
-        <b-nav-item href="#">My Events</b-nav-item>
+        <b-nav-item href="/events/list">My Events</b-nav-item>
         <b-nav-item href="#">Dashboard</b-nav-item>
         <div class="UserAvatarButton" @click="openDropdown">
           <img src="https://iili.io/Jk1PRV4.jpg" class="UserAvatar" />
@@ -71,8 +70,8 @@
         </div>
       </template>
       <template v-else-if="isUserType('admin')">
-        <b-nav-item href="#">Cari Event</b-nav-item>
-        <b-nav-item href="#">User Management</b-nav-item>
+        <b-nav-item href="/events/list">Cari Event</b-nav-item>
+        <b-nav-item href="/user-management">User Management</b-nav-item>
         <b-nav-item href="#">Dashboard</b-nav-item>
         <div class="UserAvatarButton" @click="openDropdown">
           <img src="https://iili.io/Jk1PRV4.jpg" class="UserAvatar" />
@@ -158,6 +157,7 @@ export default {
       // To be implemented
     },
     navigateToSubscription() {
+      this.$router.push('/subscription');
       // To be implemented
     },
     logout() {

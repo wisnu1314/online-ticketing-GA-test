@@ -55,7 +55,7 @@
               </div>
               <div class="mb-3">
                 <b>Tahun Berdiri</b>
-                <p>{{ data_eo.year }}</p>
+                <p>{{ data_eo.establishYear }}</p>
               </div>
             </div>
             <div class="col">
@@ -65,7 +65,7 @@
               </div>
               <div class="mb-3">
                 <b>Nomor Telepon Organisasi</b>
-                <p>{{ data_eo.phone }}</p>
+                <p>{{ data_eo.contactNumber }}</p>
               </div>
               <div class="mb-3">
                 <b>Alamat Organisasi</b>
@@ -75,16 +75,16 @@
             <div class="col">
               <div class="mb-3">
                 <b>Tanggal Bergabung</b>
-                <p>{{ data_eo.created }}</p>
+                <p>{{ data_eo.createdAt }}</p>
               </div>
               <div class="mb-3">
                 <b>Tanggal Terakhit Diperbarui</b>
-                <p>{{ data_eo.lastUpdate }}</p>
+                <p>{{ data_eo.updatedAt }}</p>
               </div>
               <div class="mb-3">
                 <b>Kuota Auto-Generate Deskripsi Event</b>
-                <p>{{ data_eo.kuota }}</p>
-                <button>Tambah</button>
+                <p>{{ data_eo.gptAccessTokenQuota }}</p>
+                <button @click="goToSubscriptionPlan()">Tambah</button>
               </div>
             </div>
           </div>
@@ -104,27 +104,26 @@ export default {
     return {
       user: 0,
       account: [],
-      data_eo: {
-        'name': 'OSIS SMAN 8 BDG',
-        'email': 'osissman8bdg@gmail.com',
-        'year': '1968',
-        'industry': 'Musik, Seni Pertunjukan',
-        'phone': '0812345678',
-        'address': 'Jl. Solontongan No.3, Kelurahan Turangga, Kecamatan Lengkong, Kota Bandung, Jawa Barat',
-        'created': '14/10/2023 15.00 GMT+7',
-        'lastUpdate': '14/10/2023 15.00 GMT+7',
-        'kuota': '4',
-        'description': 'SMA Negeri 8 Bandung, merupakan salah satu Sekolah Menengah Atas Negeri di Kota Bandung, beralamat di Jl. Solontongan No.3, Kelurahan Turangga, Kecamatan Lengkong, Kota Bandung, Jawa Barat'
-      }
+      data_eo: []
     }
   },
   fetch(){
     const userData = JSON.parse(localStorage.getItem('userData'));
     this.account = userData
+    const bearerToken = userData?.token;
     if (this.account.role === 'customer') {
       this.user = 1
     } else if (this.account.role === 'eo') {
       this.user = 2
+      const id = {
+        "userId": userData.userId
+      }
+      this.$axios(`/api/profile/eo`,id,{
+        headers: {
+        'Authorization': `Bearer ${bearerToken}`
+      }
+      })
+      console.log(id, bearerToken);
     } else if (this.account.role === 'admin') {
       this.user = 3
     }
@@ -133,6 +132,9 @@ export default {
   methods: {
     goToEdit(){
       this.$router.push('/account/edit');
+    },
+    goToSubscriptionPlan(){
+      this.$router.push('/subscription')
     }
   },
 }

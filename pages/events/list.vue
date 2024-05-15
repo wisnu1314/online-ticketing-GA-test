@@ -5,8 +5,8 @@
     </div>
     <div class="m-5">
       <b-row>
-        <b-col sm="2">
-          <!-- <p class="h3">Filter</p> -->
+        <!-- <b-col sm="2">
+          <p class="h3">Filter</p>
           <p class="h5">Lokasi</p>
           <p class="h5">Waktu</p>
           <div>
@@ -17,7 +17,7 @@
               <b-form-radio v-model="selected" :aria-describedby="ariaDescribedby" name="some-radios" value="4">Bulan ini</b-form-radio>
             </b-form-group>
           </div>
-        </b-col>
+        </b-col> -->
         <b-col sm="10">
           <div class="row">
             <div v-for="(event,index) in events" :key="index" class="col-sm-auto m-3">
@@ -38,7 +38,8 @@ export default {
   },
   data(){
     return {
-      events: []
+      events: [],
+      selected: 0
     }
   },
   async fetch(){
@@ -54,6 +55,8 @@ export default {
     })
   },
   fetchOnServer: false,
+  methods: {
+  },
 }
 </script>
 
