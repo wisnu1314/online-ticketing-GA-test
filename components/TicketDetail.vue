@@ -62,13 +62,12 @@
             },
           });
           this.ticket = response.data.data;
-          console.log('cock', this.ticket)
           const eventResponse = await this.$axios.get(`/api/events/${this.ticket.eventId}`, {
             headers: {
               'Authorization': `Bearer ${bearerToken}`,
             },
           });
-          console.log('cock',eventResponse)
+          
           this.eventImageUrl = eventResponse.data.data.event.promotionalContent.posterImageUrl || 'https://img.freepik.com/free-photo/painting-mountain-lake-with-mountain-background_188544-9126.jpg';
         } catch (error) {
           console.error('Error loading ticket detail:', error);
