@@ -22,12 +22,12 @@
         <b-nav-item href="#">Cari Event</b-nav-item>
         <b-nav-item href="/myTickets">My Tickets</b-nav-item>
         <div class="UserAvatarButton" @click="openDropdown">
-          <img src="getImageUrl()" class="UserAvatar" />
+          <img :src="getImageUrl()" class="UserAvatar" />
           <b-dropdown ref="profileDropdown1" variant="link" no-caret right>
             <b-dropdown-item @click="navigateToProfile">
               <div class="ProfileDropdownItem">
                 <div class="AvatarContainer">
-                  <img src="getImageUrl()" class="AvatarImage" />
+                  <img :src="getImageUrl()" class="AvatarImage" />
                 </div>
                 <div v-if="userData" class="UserInfo">
                   <div class="DropdownProfileName">{{ userData?.name }}</div>
@@ -48,12 +48,12 @@
         <b-nav-item href="#">My Events</b-nav-item>
         <b-nav-item href="#">Dashboard</b-nav-item>
         <div class="UserAvatarButton" @click="openDropdown">
-          <img src="getImageUrl()" class="UserAvatar" />
+          <img :src="getImageUrl()" class="UserAvatar" />
           <b-dropdown ref="profileDropdown2" variant="link" no-caret right>
             <b-dropdown-item @click="navigateToProfile">
               <div class="ProfileDropdownItem">
                 <div class="AvatarContainer">
-                  <img src="getImageUrl()" class="AvatarImage" />
+                  <img :src="getImageUrl()" class="AvatarImage" />
                 </div>
                 <div v-if="userData" class="UserInfo">
                   <div class="DropdownProfileName">{{ userData?.name }}</div>
@@ -75,12 +75,12 @@
         <b-nav-item href="#">User Management</b-nav-item>
         <b-nav-item href="#">Dashboard</b-nav-item>
         <div class="UserAvatarButton" @click="openDropdown">
-          <img src="getImageUrl()" class="UserAvatar" />
+          <img :src="getImageUrl()" class="UserAvatar" />
           <b-dropdown ref="profileDropdown3" variant="link" no-caret right>
             <b-dropdown-item @click="navigateToProfile">
               <div class="ProfileDropdownItem">
                 <div class="AvatarContainer">
-                  <img src="getImageUrl()" class="AvatarImage" />
+                  <img :src="getImageUrl()" class="AvatarImage" />
                 </div>
                 <div v-if="userData" class="UserInfo">
                   <div class="DropdownProfileName">{{ userData?.name }}</div>

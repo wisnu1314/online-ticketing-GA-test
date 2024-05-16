@@ -17,32 +17,33 @@
             </div>
             <div v-if="tickets.length === 0" class="noTickets">Tidak ada tiket yang tersedia.</div>
             <div v-for="(ticket, index) in tickets" :key="ticket._id" class="ticketCard">
-                <router-link :to="{ name: 'ticket-detail', params: { id: ticket._id } }"></router-link>
-                <div class="ticketCardHeader">
-                    <img :src="imageUrls[index]" alt="Event Image" class="eventImage"/>
-                    <div class="ticketCardInfo">
-                        <h3>{{ ticket.eventTitle }}</h3>
-                        <p class="LocationDetail">
-                            {{ ticket.eventLocation }} | {{ formattedDateTime(ticket) }}
-                        </p>
-                        
+                <router-link :to="{ name: 'ticket-detail', params: { id: ticket._id } }">
+                    <div class="ticketCardHeader">
+                        <img :src="imageUrls[index]" alt="Event Image" class="eventImage"/>
+                        <div class="ticketCardInfo">
+                            <h3>{{ ticket.eventTitle }}</h3>
+                            <p class="LocationDetail">
+                                {{ ticket.eventLocation }} | {{ formattedDateTime(ticket) }}
+                            </p>
+                            
+                        </div>
                     </div>
-                </div>
-            <div class="ticketCardDetails">
-                <div class="status" :class="statusClass(ticket.status)">{{ ticket.status === 'active' ? 'Aktif' : 'Selesai' }}</div>
-                <div class="categoryAndPrice">
-                    <p>
-                        <span v-for="category in ticket.category" :key="category._id">
-                            {{ category.categoryName }} x {{ category.totalTickets }},
-                        </span>
-                    </p>
-                    <div class="totalPrice">
-                        Rp{{ formattedPrice(ticket.category.reduce((acc, category) => acc + category.totalPrice, 0)) }}
+                </router-link>
+                <div class="ticketCardDetails">
+                    <div class="status" :class="statusClass(ticket.status)">{{ ticket.status === 'active' ? 'Aktif' : 'Selesai' }}</div>
+                    <div class="categoryAndPrice">
+                        <p>
+                            <span v-for="category in ticket.category" :key="category._id">
+                                {{ category.categoryName }} x {{ category.totalTickets }},
+                            </span>
+                        </p>
+                        <div class="totalPrice">
+                            Rp{{ formattedPrice(ticket.category.reduce((acc, category) => acc + category.totalPrice, 0)) }}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <b-pagination v-model="currentPage" :total-rows="totalTickets" :per-page="perPage" @change="loadTickets" />
+            <b-pagination v-model="currentPage" :total-rows="totalTickets" :per-page="perPage" @change="loadTickets" />
         </div>
     </div>
   </template>
@@ -66,7 +67,6 @@
     methods: {
       async loadTickets() {
         try {
-            console.log('selected', this.selectedStatus)
             const userData = JSON.parse(localStorage.getItem('userData'));
             const bearerToken = userData?.token;
             const statusFilter = this.selectedStatus === 'all' ? '' : `&status=${this.selectedStatus}`;
@@ -86,7 +86,7 @@
         const userData = JSON.parse(localStorage.getItem('userData'));
         const bearerToken = userData?.token;
 
-        const imageUrlPromises = this.tickets.map(async (ticket) => {
+        const imageUrlPromises = this.tickets?.map(async (ticket) => {
             try {
             const response = await this.$axios.get(`/api/events/${ticket.eventId}`, {
                 headers: {
@@ -96,6 +96,7 @@
 
             if (response.data.code === 200 && response.data.status === 'OK') {
                 const eventPromotionalContent = response.data.data.promotionalContent;
+                console.log('imagePromise', )
                 return eventPromotionalContent.posterImageUrl !== ''
                 ? eventPromotionalContent.posterImageUrl
                 : 'https://img.freepik.com/free-photo/painting-mountain-lake-with-mountain-background_188544-9126.jpg';
@@ -189,15 +190,18 @@
     gap: 2rem;
 }
 .eventImage {
-    width: 60px;
-    height: 60px;
+    width: 5rem;
+    height: 5rem;
     object-fit: cover;
+    align-self: center;
     border-radius: 0.5rem;
+    justify-self: center;
 }
   
 .ticketCardInfo {
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
     gap: 0.1rem;
 }
 .ticketCardDetails {

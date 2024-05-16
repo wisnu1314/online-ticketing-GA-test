@@ -1,19 +1,29 @@
 <template>
     <div class="ticketDetailWrapper">
-      <div class="ticketDetail">
-        <img :src="eventImageUrl" alt="Event Image" class="eventImage" />
-        <div class="ticketInfo">
-          <h1>{{ ticket.eventTitle }}</h1>
-          <p><strong>Nomor Pemesanan:</strong> {{ ticket.orderNumber }}</p>
-          <p><strong>Tanggal dan Waktu:</strong> {{ formattedDateTime(ticket) }}</p>
-          <p><strong>Lokasi:</strong> {{ ticket.eventLocation }}</p>
-          <p><strong>Status Pemesanan:</strong> <span :class="statusClass(ticket.status)">{{ ticket.status }}</span></p>
-          <p><strong>Tiket:</strong> {{ formattedCategories(ticket.category) }}</p>
-          <h2>Detail Pembayaran</h2>
-          <div v-for="category in ticket.category" :key="category._id">
-            <p>{{ category.categoryName }} x {{ category.totalTickets }}: Rp {{ formattedPrice(category.totalPrice) }}</p>
+      <div v-if="ticketLoaded" class="ticketDetail">
+        <div class="EventImageWrapper">
+          <img :src="eventImageUrl" alt="Event Image" class="eventDetailImage" />
+        </div>
+        <div class="ticketDetailInfo">
+          <div class="MainDetails">
+            <h1>{{ ticket.eventTitle }}</h1>
+            <p><strong>Nomor Pemesanan</strong> {{ ticket._id }}</p>
+            <strong>Tanggal dan Waktu</strong> 
+            <p>{{ formattedDateTime(ticket) }}</p>
+            <strong>Lokasi</strong>
+            <p> {{ ticket.eventLocation }}</p>
+            <strong>Status Pemesanan</strong>
+            <div class="statusDetail" :class="statusClass(ticket.status)">{{ ticket.status === 'active' ? 'Aktif' : 'Selesai' }}</div>
+            <strong>Tiket</strong>
+            <p> {{ formattedCategories(ticket.category) }}</p>
           </div>
-          <h2>Total: Rp {{ formattedPrice(totalPrice) }}</h2>
+          <div class="OrderDetails">
+            <h2>Detail Pembayaran</h2>
+            <div v-for="category in ticket.category" :key="category._id">
+              <p>{{ category.categoryName }} x {{ category.totalTickets }}: Rp {{ formattedTicketPrice(category.totalPrice) }}</p>
+            </div>
+            <h2>Total: Rp {{ formattedTicketPrice(totalPrice) }}</h2>
+            </div>
         </div>
       </div>
     </div>
@@ -23,22 +33,26 @@
   export default {
     data() {
       return {
-        ticket: {},
+        ticket: null,
         eventImageUrl: ''
       };
     },
     computed: {
       totalPrice() {
         return this.ticket.category.reduce((acc, category) => acc + category.totalPrice, 0);
+      },
+      ticketLoaded(){
+        return this.ticket !== null
       }
     },
-    async mounted() {
-      await this.loadTicketDetail();
+    mounted() {
+      this.loadTicketDetail();
     },
     methods: {
       async loadTicketDetail() {
         try {
           const ticketId = this.$route.params.id;
+          
           const userData = JSON.parse(localStorage.getItem('userData'));
           const bearerToken = userData?.token;
   
@@ -47,16 +61,15 @@
               'Authorization': `Bearer ${bearerToken}`,
             },
           });
-  
-          this.ticket = response.data.data.ticket;
-  
+          this.ticket = response.data.data;
+          console.log('cock', this.ticket)
           const eventResponse = await this.$axios.get(`/api/events/${this.ticket.eventId}`, {
             headers: {
               'Authorization': `Bearer ${bearerToken}`,
             },
           });
-  
-          this.eventImageUrl = eventResponse.data.data.promotionalContent.posterImageUrl || 'https://img.freepik.com/free-photo/painting-mountain-lake-with-mountain-background_188544-9126.jpg';
+          console.log('cock',eventResponse)
+          this.eventImageUrl = eventResponse.data.data.event.promotionalContent.posterImageUrl || 'https://img.freepik.com/free-photo/painting-mountain-lake-with-mountain-background_188544-9126.jpg';
         } catch (error) {
           console.error('Error loading ticket detail:', error);
         }
@@ -79,7 +92,7 @@
         const gmtOffset = `GMT${timeZoneOffset >= 0 ? '+' : ''}${timeZoneOffset}`;
         return `${formattedStart} ${gmtOffset} - ${formattedEnd} ${gmtOffset}`;
       },
-      formattedPrice(price) {
+      formattedTicketPrice(price) {
         return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
       },
       formattedCategories(categories) {
@@ -87,8 +100,8 @@
       },
       statusClass(status) {
         return {
-          'active': 'status-active',
-          'inactive': 'status-done',
+          'active': 'statusActive',
+          'inactive': 'statusDone',
         }[status] || 'status-unknown';
       }
     }
@@ -110,34 +123,64 @@
     border: 1px solid #ccc;
     border-radius: 0.5rem;
     padding: 2rem;
-    max-width: 800px;
+    width:100%;
+    max-width: 65rem;
     background-color: white;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
   
-  .eventImage {
+.EventImageWrapper {
     width: 100%;
-    height: auto;
-    margin-bottom: 1rem;
-    border-radius: 0.5rem;
-  }
-  
-  .ticketInfo {
+    height: 10rem;
+    max-height: 16rem;
+    border-radius: 1rem;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f0f0;
+}
+
+.EventImageWrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; 
+  border-radius: 1rem;
+}
+.ticketDetailInfo {
+    display: flex;
+    flex-direction: row;
     gap: 0.5rem;
-  }
+}
+.MainDetails{
+  display: flex;
+  flex-direction: column;
+  width: 64%;
+}
+.OrderDetails{
+  display: flex;
+  flex-direction: column;
+  width:36%
+}
+.statusDetail {
+    border-radius: 0.25rem;
+    font-weight: bold;
+    text-align: center;
+    width: fit-content;
+    color:white;
+    padding: 0.1rem 0.5rem;
+}
   
-  .status-active {
-    color: green;
-  }
+.statusActive {
+    background-color: green;
+}
+.statusDone {
+    background-color: red;
+}
   
-  .status-done {
-    color: red;
-  }
-  
-  .status-unknown {
-    color: gray;
-  }
+.statusUnknown {
+    background-color: gray;
+}
   </style>
   
