@@ -118,9 +118,10 @@ body {
   /* height: 100vh; */
   /* background-color: #0e9d6e; */
   justify-content: center;
-  align-content: center;
+  align-items: center;
   flex-direction: column;
   font-size: 1rem;
+  overflow-y: hidden;
 }
 
 .MiddleBox {
@@ -153,6 +154,7 @@ body {
   margin-bottom: auto;
   background-color: white;
   padding: 20px;
+  overflow-y: hidden;
 }
 
 /* Form footer */
