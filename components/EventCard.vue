@@ -7,7 +7,7 @@
       <p class="event_name"><strong>{{ event.eventTitle }}</strong></p>
       <p class="event_time">{{ formattedDate(event.startDate) }}</p>
       <p class="event_address">{{ event.location }}</p>
-      <p class="event_price"><strong>Rp{{ event.tickets[event.tickets.length - 1].pricePerTicket }} - Rp{{ event.tickets[0].pricePerTicket}}</strong></p>
+      <p class="event_price"><strong>{{ getPriceRange() }}</strong></p>
       <p class="event_org_name">{{ event.ownerName }}</p>
     </div>
   </div>
@@ -20,6 +20,9 @@ export default {
     name: 'EventCard',
     props: ['event'],
     methods: {
+      formatPrice(price) {
+        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      },
       formattedDate(startDate){
         const startTime = new Date(startDate);
         const options = {
@@ -51,7 +54,7 @@ export default {
         return `${formattedStart} ${gmtOffset} - ${formattedEnd} ${gmtOffset}`;
       },
       getPriceRange() {
-        const prices = this.categories.map((category) => category.pricePerTicket);
+        const prices = this.event.tickets.map((category) => category.pricePerTicket);
         const minPrice = this.formatPrice(Math.min(...prices));
         const maxPrice = this.formatPrice(Math.max(...prices));
         if(minPrice === maxPrice){

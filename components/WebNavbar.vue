@@ -19,7 +19,7 @@
     </b-navbar-nav>
     <b-navbar-nav v-if="isUserLoggedIn" class="RightNavigation">
       <template v-if="isUserType('customer')">
-        <b-nav-item href="#">Cari Event</b-nav-item>
+        <b-nav-item href="/events/list">Cari Event</b-nav-item>
         <b-nav-item href="/myTickets">My Tickets</b-nav-item>
         <div class="UserAvatarButton" @click="openDropdown">
           <img :src="getImageUrl()" class="UserAvatar" />
@@ -44,7 +44,8 @@
 
       </template>
       <template v-else-if="isUserType('eo')">
-        <b-nav-item href="/events/list">My Events</b-nav-item>
+        <b-nav-item href="/events/list">Cari Event</b-nav-item>
+        <b-nav-item href="/myevents/list">My Events</b-nav-item>
         <b-nav-item href="#">Dashboard</b-nav-item>
         <div class="UserAvatarButton" @click="openDropdown">
           <img :src="getImageUrl()" class="UserAvatar" />

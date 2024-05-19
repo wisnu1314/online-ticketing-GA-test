@@ -50,12 +50,17 @@
         <div>
           <b-button v-b-modal.modal-1>Pesan Tiket</b-button>
           <b-modal id="modal-1" ref="modal-buy" size="xl" hide-footer>
+            <div class="p-5">
+              <div class="mb-3">
+              <p class="title">{{events.eventTitle}}</p>
+              <p>{{formattedDateTime}}</p>
+            </div>
             <b-row>
               <b-col sm="7">
-                <div v-for="(category,index) in categories" :key="index">
+                <div class="mb-3" v-for="(category,index) in categories" :key="index">
                   <b-row>
                     <b-col sm="4">
-                      <label>{{ category.categoryName }}</label>
+                      <label><strong>{{ category.categoryName }}</strong></label>
                     </b-col>
                     <b-col sm="8">
                       <b-form-input v-model="detail[index].totalTickets" type="number" min="0" :max="category.totalTickets"  @input="detail[index].totalPrice = detail[index].totalTickets * detail[index].pricePerTicket"></b-form-input>
@@ -65,6 +70,7 @@
                 </div>
               </b-col>
               <b-col sm="5">
+                <img :src="promotionalContent.posterImageUrl" style="max-width: 100%;"/>
                 <p><strong>Detail Pembayaran</strong></p>
                 <b-row v-for="(det,index) in detail" :key="index">
                   <b-col sm="6">
@@ -82,13 +88,14 @@
                     <p><strong>Rp {{ formatPrice(detail.reduce((accum,item) => accum + item.totalPrice, 0)) }}</strong></p>
                   </b-col>
                 </b-row>
-                <b-button v-if="user==1 || user==0" @click="submitOrder()">Pesan</b-button>
+                <b-button class="mt-4" block variant="success" v-if="user==1 || user==0" @click="submitOrder()">Pesan</b-button>
               </b-col>
             </b-row>
+            </div>
           </b-modal>
         </div>
         <div>
-          <b-button v-show="user==2 || user==3" v-b-modal.modal-2 variant="outline-danger" class="mt-2 bg-white text-danger" title="BootstrapVue">Hapus Event Ini</b-button>
+          <b-button v-show="((user==2 && (organizer.userId === userData.userId)) || user==3)" v-b-modal.modal-2 variant="outline-danger" class="mt-2 bg-white text-danger" title="BootstrapVue">Hapus Event Ini</b-button>
           <b-modal id="modal-2">
             <p><strong>Apakah Anda yakin ingin menghapus event ini?</strong></p>
             <p>Periksa kembali detail event-nya dan pastikan bahwa event yang akan dihapus adalah event yang benar.</p>
@@ -140,7 +147,8 @@ export default {
       categories: [],
       organizer: [],
       detail: [],
-      submitDetail: []
+      submitDetail: [],
+      userData: []
     }
   },
   async fetch(){
@@ -163,14 +171,13 @@ export default {
       })
     })
     const userData = JSON.parse(localStorage.getItem('userData'));
-    if (!isNaN(userData)) {
-      if (userData.role === 'customer') {
-        this.user = 1
-      } else if (userData.role === 'eo') {
-        this.user = 2
-      } else if (userData.role === 'admin') {
-        this.user = 3
-      }
+    this.userData = userData
+    if (userData.role === 'customer') {
+      this.user = 1
+    } else if (userData.role === 'eo') {
+      this.user = 2
+    } else if (userData.role === 'admin') {
+      this.user = 3
     }
     // const bearerToken = userData?.token;
   },

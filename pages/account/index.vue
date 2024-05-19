@@ -11,37 +11,38 @@
       </div>
       <hr>
       <div v-if="user === 1 || user === 3" class="row mt-4">
-        <div class="col">
+        <div class="col-6">
           <!-- Image -->
+          <img v-if="user===1" :src="account.profilePictureUrl" style="max-width: 100%;"/>
+          <img v-else src="/admin.png"/>
         </div>
-        <div class="col">
-          <div>
-            <b>Nama Depan</b>
-            <p>{{account.name}}</p>
+        <div class="row col-6">
+          <div class="col">
+            <div>
+              <b>Nama Depan</b>
+              <p>{{account.name}}</p>
+            </div>
+            <div>
+              <b>Email</b>
+              <p>{{account.email }}</p>
+            </div>
           </div>
-          <div>
-            <b>Nama Belakang</b>
-            <p>{{account.lastname}}</p>
-          </div>
-          <div>
-            <b>Email</b>
-            <p>{{account.email }}</p>
-          </div>
-        </div>
-        <div class="col">
-          <div>
-            <b>Tanggal Bergabung</b>
-            <p>{{ account.createdAt }}</p>
-          </div>
-          <div>
-            <b>Tanggal Terakhir Diperbarui</b>
-            <p>{{ account.updatedAt }}</p>
+          <div class="col">
+            <div>
+              <b>Tanggal Bergabung</b>
+              <p>{{ account.createdAt }}</p>
+            </div>
+            <div>
+              <b>Tanggal Terakhir Diperbarui</b>
+              <p>{{ account.updatedAt }}</p>
+            </div>
           </div>
         </div>
-        <div class="col"></div>
       </div>
       <div v-if="user==2" class="row mt-4">
-        <div class="col-3"></div>
+        <div class="col-3">
+          <img :src="data_eo.profilePictureUrl" style="max-width: 100%;" />
+        </div>
         <div class="col-9">
           <div class="row col">
             <div class="col">
@@ -109,23 +110,34 @@ export default {
   },
   fetch(){
     const userData = JSON.parse(localStorage.getItem('userData'));
-    this.account = userData
     const bearerToken = userData?.token;
-    if (this.account.role === 'customer') {
+    if (userData.role === 'customer') {
       this.user = 1
-    } else if (this.account.role === 'eo') {
-      this.user = 2
-      const id = {
-        "userId": userData.userId
-      }
-      this.$axios(`/api/profile/eo`,id,{
+      this.$axios(`/api/profile/${userData.userId}`,{
         headers: {
         'Authorization': `Bearer ${bearerToken}`
       }
+      }).then(res=>{
+        this.account = res.data.data
       })
-      console.log(id, bearerToken);
-    } else if (this.account.role === 'admin') {
+    } else if (userData.role === 'eo') {
+      this.user = 2
+      this.$axios(`/api/profile/eo/${userData.userId}`,{
+        headers: {
+        'Authorization': `Bearer ${bearerToken}`
+      }
+      }).then(res=>{
+        this.data_eo = res.data.data
+      })
+    } else if (userData.role === 'admin') {
       this.user = 3
+      this.$axios(`/api/profile/${userData.userId}`,{
+        headers: {
+        'Authorization': `Bearer ${bearerToken}`
+      }
+      }).then(res=>{
+        this.account = res.data.data
+      })
     }
   },
   fetchOnServer: false,

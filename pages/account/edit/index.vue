@@ -6,51 +6,51 @@
           <p class="h3 title">Akun</p>
         </div>
         <div class="col-sm-3">
-          <button v-if="user == 1 || user == 2" class="btn_cancel">Cancel</button>
+          <button v-if="user == 1 || user == 2" class="btn_cancel" @click="backToAccount()">Cancel</button>
           <button v-if="user == 1 || user == 2" class="btn_save" @click.prevent="saveUpdate()">Simpan</button>
         </div>
       </div>
       <hr>
       <form v-if="user == 1">
         <div class="row mt-4">
-          <div class="col">
+          <div class="col-6">
             <!-- Image -->
-            <img :src="account.profilePictureUrl"/>
+            <img :src="account.profilePictureUrl" style="max-width: 100%;"/>
             <button>Pilih Foto</button>
           </div>
-          <div class="col">
-            <div class="form-group">
-              <b>Nama Depan</b>
-              <input v-model=account.name class='form-control'>
+          <div class="row col-6">
+            <div class="col">
+              <div class="form-group">
+                <b>Nama Depan</b>
+                <input v-model=account.name class='form-control'>
+              </div>
+              <div>
+                <b>Email </b>
+                <input v-model=account.email class='form-control'>
+              </div>
             </div>
-            <div class="form-group">
-              <b>Nama Belakang</b>
-              <input v-model=account.lastname class='form-control'>
-            </div>
-            <div>
-              <b>Email </b>
-              <input v-model=account.email class='form-control'>
-            </div>
-          </div>
-          <div class="col">
-            <div class="form-group">
-              <b>Password Lama</b>
-              <input v-model="account.oldpassword" class='form-control' type="password" placeholder='********'>
-            </div>
-            <div class="form-group">
-              <b>Password Baru</b>
-              <input v-model="account.newpassword" class='form-control' type="password" placeholder='********'>
-            </div>
-            <div>
-              <b>Konfirmasi Password </b>
-              <input v-model="account.confirmpassword" class='form-control' type="password" placeholder='********'>
+            <div class="col">
+              <div class="form-group">
+                <b>Password Lama</b>
+                <input v-model="account.oldpassword" class='form-control' type="password" placeholder='********'>
+              </div>
+              <div class="form-group">
+                <b>Password Baru</b>
+                <input v-model="account.newpassword" class='form-control' type="password" placeholder='********'>
+              </div>
+              <div>
+                <b>Konfirmasi Password </b>
+                <input v-model="account.confirmpassword" class='form-control' type="password" placeholder='********'>
+              </div>
             </div>
           </div>
         </div>
       </form>
       <form v-if="user == 2">
         <div class="row mt-4">
-          <div class="col-3"></div>
+          <div class="col-3">
+            <img :src="data_eo.profilePictureUrl" style="max-width: 100%;" />
+          </div>
           <div class="col-9">
             <div class="row col">
               <div class="col">
@@ -145,28 +145,43 @@ export default {
     goToEdit(){
       this.$router.push('/account/edit');
     },
+    backToAccount(){
+      this.$router.push('/account');
+    },
     async saveUpdate(){
-      const userData = {
+      if (this.user === 1) {
+        const userData = {
           "userId": this.account.userId,
           "name": this.account.name,
           "email": this.account.email,
           "profilePictureUrl": "https://img.freepik.com/free-photo/painting-mountain-lake-with-mountain-background_188544-9126.jpg"
-      }
-      if (this.user === 1) {
+        }
         await this.$axios.put(`/api/profile/customer/update`,userData,{
           headers: {
           'Authorization': `Bearer ${this.account.token}`
           }
         })
-        window.location.reload()
       } else if (this.user === 2){
-        await this.$axios.put(`/api/profile/eo/update`,userData,{
+        const eoData = {
+          "userId": this.data_eo.userId,
+          "email": this.data_eo.email,
+          "name": this.data_eo.name,
+          "establishYear": this.data_eo.establishYear,
+          "description": this.data_eo.description,
+          "industry": this.data_eo.industry,
+          "contactNumber": this.data_eo.contactNumber,
+          "address": this.data_eo.description,
+          "profilePictureUrl": "https://img.freepik.com/free-photo/painting-mountain-lake-with-mountain-background_188544-9126.jpg"
+        }
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        const bearerToken = userData?.token;
+        await this.$axios.put(`/api/profile/eo/update`,eoData,{
           headers: {
-          'Authorization': `Bearer ${this.account.token}`
+          'Authorization': `Bearer ${bearerToken}`
           }
         })
-        window.location.reload()
       }
+      this.$router.push('/account');
     }
   },
 }
