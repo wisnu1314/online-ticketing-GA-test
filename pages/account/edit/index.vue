@@ -240,6 +240,14 @@ export default {
           'Authorization': `Bearer ${bearerToken}`
           }
         })
+        const {profilePictureUrl, email, name, ...filteredUserData} = userData;
+        const newUserData = {
+          ...filteredUserData,
+          name: formUserData.name,
+          email:formUserData.email,
+          profilePictureUrl:formUserData.profilePictureUrl
+        }
+        localStorage.setItem('userData', JSON.stringify(newUserData))
       } else if (this.user === 2){
         const eoData = {
           "userId": this.data_eo.userId,
@@ -257,6 +265,14 @@ export default {
           'Authorization': `Bearer ${bearerToken}`
           }
         })
+        const {profilePictureUrl, email, name, ...filteredUserData} = userData;
+        const newUserData = {
+          ...filteredUserData,
+          name: eoData.name,
+          email:eoData.email,
+          profilePictureUrl:eoData.profilePictureUrl
+        }
+        localStorage.setItem('userData', JSON.stringify(newUserData))
       }
       this.$router.push('/account');
       if (this.oldPassword !== '' && this.newPassword !== '' && this.confirmPassword !== '' && this.newPassword === this.confirmPassword) {

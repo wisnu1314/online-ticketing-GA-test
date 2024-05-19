@@ -57,7 +57,7 @@
             </div>
             <b-row>
               <b-col sm="7">
-                <div class="mb-3" v-for="(category,index) in categories" :key="index">
+                <div v-for="(category,index) in categories" :key="index" class="mb-3">
                   <b-row>
                     <b-col sm="4">
                       <label><strong>{{ category.categoryName }}</strong></label>
@@ -88,7 +88,7 @@
                     <p><strong>Rp {{ formatPrice(detail.reduce((accum,item) => accum + item.totalPrice, 0)) }}</strong></p>
                   </b-col>
                 </b-row>
-                <b-button class="mt-4" block variant="success" v-if="user==1 || user==0" @click="submitOrder()">Pesan</b-button>
+                <b-button v-if="user==1 || user==0" class="mt-4" block variant="success" @click="submitOrder()">Pesan</b-button>
               </b-col>
             </b-row>
             </div>
@@ -114,7 +114,7 @@
           </template>
           </b-modal>
         </div>
-          <b-modal ref="modal-sukses" id="modal-sukses"  size="xl" centered>
+          <b-modal id="modal-sukses" ref="modal-sukses"  size="xl" centered>
             <h1 class="text-center">Pembayaran Sukses!</h1>
             <template #modal-footer>
             <div class="w-100">
@@ -132,7 +132,7 @@
         </div>
       </div>
     </div>
-  </div>
+  
 </template>
 
 <script>
@@ -179,7 +179,6 @@ export default {
     } else if (userData.role === 'admin') {
       this.user = 3
     }
-    // const bearerToken = userData?.token;
   },
   fetchOnServer: false,
   computed: {
@@ -251,7 +250,6 @@ export default {
         'Authorization': `Bearer ${bearerToken}`
         }
       })
-      // this.$refs['modal-buy'].hide()
       this.$refs['modal-sukses'].show()
       }
     },

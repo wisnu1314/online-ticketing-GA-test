@@ -126,7 +126,7 @@
             </div>
         </div>
         <div v-if = "showForm" class="BottomButtons">
-            <b-button class="CancelButton">Cancel</b-button>
+            <b-button class="CancelButton" @click="Cancel">Cancel</b-button>
             <b-button @click="editEvent">Simpan</b-button>
         </div>
         <div v-if="!showForm" class="PreviewEditBox">
@@ -472,11 +472,15 @@ export default {
 
                 if (response.data.code === 200 && response.data.status === 'OK') {
                     alert(`${response.data.message}`);
+                    this.$router.push('/myevents/list')
                 }
                 
             } catch (error){
                 console.log('EditEvent', error);
             }
+        },
+        Cancel(){
+            this.$router.push('/myevents/list');
         }
         
     },

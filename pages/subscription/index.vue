@@ -103,6 +103,9 @@ export default {
         'Authorization': `Bearer ${userData?.token}`
         }
       }).then(res=>{
+        const totalToken = this.packages.find((p) => p._id === subsId).totalToken
+        userData.gptAccessTokenQuota = userData.gptAccessTokenQuota + totalToken
+        localStorage.setItem('userData', JSON.stringify(userData))
         this.$refs['modal-sukses'].show()
       })
     }
