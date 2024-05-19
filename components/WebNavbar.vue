@@ -19,15 +19,20 @@
     </b-navbar-nav>
     <b-navbar-nav v-if="isUserLoggedIn" class="RightNavigation">
       <template v-if="isUserType('customer')">
+<<<<<<< HEAD
         <b-nav-item href="/events/list">Cari Event</b-nav-item>
         <b-nav-item href="#">My Tickets</b-nav-item>
+=======
+        <b-nav-item href="#">Cari Event</b-nav-item>
+        <b-nav-item href="/myTickets">My Tickets</b-nav-item>
+>>>>>>> 8222530dd4d8ff6ae9003eeeb2e5706f5f339ee9
         <div class="UserAvatarButton" @click="openDropdown">
-          <img src="https://iili.io/Jk1PRV4.jpg" class="UserAvatar" />
+          <img :src="getImageUrl()" class="UserAvatar" />
           <b-dropdown ref="profileDropdown1" variant="link" no-caret right>
             <b-dropdown-item @click="navigateToProfile">
               <div class="ProfileDropdownItem">
                 <div class="AvatarContainer">
-                  <img src="https://iili.io/Jk1PRV4.jpg" class="AvatarImage" />
+                  <img :src="getImageUrl()" class="AvatarImage" />
                 </div>
                 <div v-if="userData" class="UserInfo">
                   <div class="DropdownProfileName">{{ userData?.name }}</div>
@@ -47,12 +52,12 @@
         <b-nav-item href="/events/list">My Events</b-nav-item>
         <b-nav-item href="#">Dashboard</b-nav-item>
         <div class="UserAvatarButton" @click="openDropdown">
-          <img src="https://iili.io/Jk1PRV4.jpg" class="UserAvatar" />
+          <img :src="getImageUrl()" class="UserAvatar" />
           <b-dropdown ref="profileDropdown2" variant="link" no-caret right>
             <b-dropdown-item @click="navigateToProfile">
               <div class="ProfileDropdownItem">
                 <div class="AvatarContainer">
-                  <img src="https://iili.io/Jk1PRV4.jpg" class="AvatarImage" />
+                  <img :src="getImageUrl()" class="AvatarImage" />
                 </div>
                 <div v-if="userData" class="UserInfo">
                   <div class="DropdownProfileName">{{ userData?.name }}</div>
@@ -74,12 +79,12 @@
         <b-nav-item href="/user-management">User Management</b-nav-item>
         <b-nav-item href="#">Dashboard</b-nav-item>
         <div class="UserAvatarButton" @click="openDropdown">
-          <img src="https://iili.io/Jk1PRV4.jpg" class="UserAvatar" />
+          <img :src="getImageUrl()" class="UserAvatar" />
           <b-dropdown ref="profileDropdown3" variant="link" no-caret right>
             <b-dropdown-item @click="navigateToProfile">
               <div class="ProfileDropdownItem">
                 <div class="AvatarContainer">
-                  <img src="https://iili.io/Jk1PRV4.jpg" class="AvatarImage" />
+                  <img :src="getImageUrl()" class="AvatarImage" />
                 </div>
                 <div v-if="userData" class="UserInfo">
                   <div class="DropdownProfileName">{{ userData?.name }}</div>
@@ -109,6 +114,7 @@ export default {
       dropdownOpen: false,
       loggedIn:false,
       userType:'',
+      profilePictureUrl:'',
       userData:{},
     };
   },
@@ -162,6 +168,7 @@ export default {
     },
     logout() {
       localStorage.removeItem('userData');
+      this.toggleDropdown()
       this.$router.push('/loginPage');
       this.$emit('userLoggedOut');
     },
@@ -175,6 +182,7 @@ export default {
         this.userData = userData;
         this.userType = userData?.role
         this.loggedIn = userData?.role === 'customer' || userData?.role=== 'eo' || userData?.role === 'admin'
+        this.profilePictureUrl = userData?.profilePictureUrl
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error('Error fetching user data:', error);
@@ -183,8 +191,13 @@ export default {
     checkSessionStorageUserData() {
       setInterval(() => {
         this.fetchUserData();
-      }, 2000); // Check every 30 seconds (adjust as needed)
+      }, 1000); // Check every 30 seconds (adjust as needed)
     },
+    getImageUrl() {
+        return this.profilePictureUrl === '' ? 
+          'https://iili.io/Jk1PRV4.jpg' 
+          :  `${this.profilePictureUrl}`;
+      },
   },
 };
 </script>

@@ -47,7 +47,8 @@ export default {
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-    baseURL: 'http://localhost:8080',
+    // baseURL: 'https://api.ippl.michaelpege.site/',
+    baseURL: process.env.BASE_URL,
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
@@ -62,4 +63,19 @@ export default {
       baseURL: process.env.BASE_URL || 'http://localhost:8080/'
     }
   },
+
+  router: {
+    extendRoutes(routes, resolve) {
+      routes.push({
+        name: 'ticket-detail',
+        path: '/tickets/:id',
+        component: resolve(__dirname, 'pages/tickets/_id.vue')
+      });
+      routes.push({
+        name: 'edit-event',
+        path: '/events/:id/edit',
+        component: resolve(__dirname, 'pages/events/_id/edit/editEvent.vue')
+      });
+    }
+  }
 }
