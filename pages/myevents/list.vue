@@ -1,13 +1,18 @@
 <template>
-  <div>
+  <div class="body">
     <div class="m-5">
+      <div class="text-right mb-2">
+        <b-button variant="success" @click="toCreateEvent()">+ Buat Event Baru</b-button>
+      </div>
       <h1>Upcoming Events</h1>
+      <p v-if="upcomingEvents.length === 0" class="text-center">Tidak Ada Event</p>
       <div class="row">
         <div v-for="(event,index) in upcomingEvents" :key="index" class="col-sm-auto m-3">
           <a :href="'/events/' + event._id"  class="text-decoration-none text-dark"><event-card :event="event"></event-card></a>
         </div>
       </div>
       <h1 class="mt-5"  >Past Events</h1>
+      <p v-if="pastEvents.length === 0" class="text-center">Tidak Ada Event</p>
       <div class="row">
         <div v-for="(event,index) in pastEvents" :key="index" class="col-sm-auto m-3">
           <a :href="'/events/' + event._id"  class="text-decoration-none text-dark"><event-card :event="event"></event-card></a>
@@ -58,6 +63,9 @@ export default {
     '$route.query': '$fetch'
   },
   methods: {
+    toCreateEvent(){
+      this.$router.push('/createEvent')
+    },
     onSearch() {
       const curentQuery = this.$route.query
       this.$router.push({
@@ -74,6 +82,9 @@ export default {
 </script>
 
 <style>
+.body {
+  min-height: 60vh;
+}
 .jumb img{
   max-height: 270px;
   width: 100%;

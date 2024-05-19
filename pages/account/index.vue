@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="body">
     <div class="container shadow-lg">
       <div class="row mb-3">
         <div class="col-sm-10">
@@ -153,6 +153,9 @@ export default {
 </script>
 
 <style scoped>
+.body {
+  min-height: 60vh;
+}
 .container {
   padding: 40px;
   margin-bottom: 40px;

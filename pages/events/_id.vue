@@ -94,6 +94,7 @@
             </div>
           </b-modal>
         </div>
+        <b-button v-show="((user==2 && (organizer.userId === userData.userId)))" variant="outline-primary" class="mt-2 bg-white text-primary" title="BootstrapVue" @click="toEditEvent()">Edit Event</b-button>
         <div>
           <b-button v-show="((user==2 && (organizer.userId === userData.userId)) || user==3)" v-b-modal.modal-2 variant="outline-danger" class="mt-2 bg-white text-danger" title="BootstrapVue">Hapus Event Ini</b-button>
           <b-modal id="modal-2">
@@ -113,9 +114,8 @@
           </template>
           </b-modal>
         </div>
-        <div>
-          <b-modal ref="modal-sukses" centered>
-            <h3>Pembayaran Sukses</h3>
+          <b-modal ref="modal-sukses" id="modal-sukses"  size="xl" centered>
+            <h1 class="text-center">Pembayaran Sukses!</h1>
             <template #modal-footer>
             <div class="w-100">
               <b-button
@@ -224,6 +224,9 @@ export default {
       },
     },
   methods: {
+    toEditEvent(){
+      this.$router.push(`/events/${this.$route.params.id}/edit`);
+    },
     formatPrice(price) {
         return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       },

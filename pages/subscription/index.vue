@@ -39,8 +39,20 @@
       </div>
     </div>
     <div>
-      <b-modal ref="modal-sukses" centered>
-        <h3>Pembayaran Sukses</h3>
+      <b-modal ref="modal-sukses" size="xl" centered>
+        <h1 class="text-center">Pembayaran Sukses!</h1>
+        <template #modal-footer>
+        <div class="w-100">
+          <b-button
+            variant="success"
+            size="md"
+            class="float-right"
+            @click="refreshPage()"
+          >
+            Ok
+          </b-button>
+        </div>
+      </template>
       </b-modal>
     </div>
   </div>
@@ -74,6 +86,9 @@ export default {
   },
   fetchOnServer: false,
   methods: {
+    refreshPage(){
+      window.location.reload()
+    },
     formatPrice(price) {
       return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },

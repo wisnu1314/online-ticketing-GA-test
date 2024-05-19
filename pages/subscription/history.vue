@@ -9,6 +9,7 @@
       :columns="columns"
       :table-data="tableData"
       row-key-field-name="_id" />
+      <div v-if="tableData.length === 0" class="empty-data">Data Empty.</div>
       <div class="mt-4">
         <ve-pagination
           :total="totalCount"
@@ -101,6 +102,19 @@
 }
 </script>
 
-<style lang="scss" scoped>
-
+<style scoped>
+.container {
+  min-height: 60vh;
+}
+.empty-data {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  width: 100%;
+  color: #666;
+  font-size: 16px;
+  border: 1px solid #eee;
+  border-top: 0;
+}
 </style>
