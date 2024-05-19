@@ -19,13 +19,8 @@
     </b-navbar-nav>
     <b-navbar-nav v-if="isUserLoggedIn" class="RightNavigation">
       <template v-if="isUserType('customer')">
-<<<<<<< HEAD
-        <b-nav-item href="/events/list">Cari Event</b-nav-item>
-        <b-nav-item href="#">My Tickets</b-nav-item>
-=======
         <b-nav-item href="#">Cari Event</b-nav-item>
         <b-nav-item href="/myTickets">My Tickets</b-nav-item>
->>>>>>> 8222530dd4d8ff6ae9003eeeb2e5706f5f339ee9
         <div class="UserAvatarButton" @click="openDropdown">
           <img :src="getImageUrl()" class="UserAvatar" />
           <b-dropdown ref="profileDropdown1" variant="link" no-caret right>
@@ -194,8 +189,8 @@ export default {
       }, 1000); // Check every 30 seconds (adjust as needed)
     },
     getImageUrl() {
-        return this.profilePictureUrl === '' ? 
-          'https://iili.io/Jk1PRV4.jpg' 
+        return this.profilePictureUrl === '' ?
+          'https://iili.io/Jk1PRV4.jpg'
           :  `${this.profilePictureUrl}`;
       },
   },
