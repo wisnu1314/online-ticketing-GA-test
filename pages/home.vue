@@ -34,7 +34,7 @@ export default {
 .jumbotron {
   background: linear-gradient(black, transparent),url('/landingjumbotron.png');
   background-size: cover;
-  height: 100vh;
+  height: 92vh;
   display: flex;
   flex-direction: row;
   align-items: center;
