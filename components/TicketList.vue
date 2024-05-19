@@ -95,8 +95,8 @@
             });
 
             if (response.data.code === 200 && response.data.status === 'OK') {
-                const eventPromotionalContent = response.data.data.promotionalContent;
-                console.log('imagePromise', )
+                const eventPromotionalContent = response.data.data.event.promotionalContent;
+                console.log('imagePromise', eventPromotionalContent)
                 return eventPromotionalContent.posterImageUrl !== ''
                 ? eventPromotionalContent.posterImageUrl
                 : 'https://img.freepik.com/free-photo/painting-mountain-lake-with-mountain-background_188544-9126.jpg';
