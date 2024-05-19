@@ -13,12 +13,22 @@
       <hr>
       <form v-if="user == 1">
         <div class="row mt-4">
-          <div class="col-6">
+          <div class="col-4">
             <!-- Image -->
             <img :src="account.profilePictureUrl" style="max-width: 100%;"/>
-            <button>Pilih Foto</button>
+            <div class="mt-2">
+              <p>Pilih Foto</p>
+              <b-form-file
+                v-model="newPhoto"
+                placeholder="Choose a file or drop it here..."
+                drop-placeholder="Drop file here..."
+                accept=".jpg, .png, .gif"
+                @change="handleFileSelect"
+              ></b-form-file>
+              <p class="text-danger">{{ warning }}</p>
+            </div>
           </div>
-          <div class="row col-6">
+          <div class="row col-8">
             <div class="col">
               <div class="form-group">
                 <b>Nama Depan</b>
@@ -32,15 +42,16 @@
             <div class="col">
               <div class="form-group">
                 <b>Password Lama</b>
-                <input v-model="account.oldpassword" class='form-control' type="password" placeholder='********'>
+                <input v-model="oldPassword" class='form-control' type="password" placeholder='********'>
               </div>
               <div class="form-group">
                 <b>Password Baru</b>
-                <input v-model="account.newpassword" class='form-control' type="password" placeholder='********'>
+                <input v-model="newPassword" class='form-control' type="password" placeholder='********'>
               </div>
               <div>
                 <b>Konfirmasi Password </b>
-                <input v-model="account.confirmpassword" class='form-control' type="password" placeholder='********'>
+                <input v-model="confirmPassword" class='form-control' type="password" placeholder='********'>
+                <p v-show="newPassword != confirmPassword" class="text-danger">Password Tidak Cocok</p>
               </div>
             </div>
           </div>
@@ -50,6 +61,17 @@
         <div class="row mt-4">
           <div class="col-3">
             <img :src="data_eo.profilePictureUrl" style="max-width: 100%;" />
+            <div class="mt-2">
+              <p>Pilih Foto</p>
+              <b-form-file
+                v-model="newPhoto"
+                placeholder="Choose a file or drop it here..."
+                drop-placeholder="Drop file here..."
+                accept=".jpg, .png, .gif"
+                @change="handleFileSelect"
+              ></b-form-file>
+              <p class="text-danger">{{ warning }}</p>
+            </div>
           </div>
           <div class="col-9">
             <div class="row col">
@@ -74,15 +96,16 @@
               <div class="col">
                 <div class="form-group">
                   <b>Password Lama</b>
-                  <input v-model="data_eo.oldpassword" class='form-control' type="password" placeholder='********'>
+                  <input v-model="oldPassword" class='form-control' type="password" placeholder='********'>
                 </div>
                 <div class="form-group">
                   <b>Password Baru</b>
-                  <input v-model="data_eo.newpassword" class='form-control' type="password" placeholder='********'>
+                  <input v-model="newPassword" class='form-control' type="password" placeholder='********'>
                 </div>
-                <div>
+                <div class="mb-2">
                   <b>Konfirmasi Password </b>
-                  <input v-model="data_eo.confirmpassword" class='form-control' type="password" placeholder='********'>
+                  <input v-model="confirmPassword" class='form-control' type="password" placeholder='********'>
+                  <p v-show="newPassword != confirmPassword" class="text-danger"><strong>Password Tidak Cocok</strong></p>
                 </div>
                 <div>
                   <b>Nomor Telepon Organisasi </b>
@@ -112,8 +135,14 @@ export default {
   data() {
     return {
       user: 0,
+      newPhoto:null,
       account: [],
-      data_eo: []
+      data_eo: [],
+      profilePic:null,
+      warning:"",
+      oldPassword : '',
+      newPassword : '',
+      confirmPassword : ''
     }
   },
   async fetch(){
@@ -128,6 +157,7 @@ export default {
         headers : head
       }).then(res =>{
         this.account = res.data.data
+        this.profilePic = this.account.profilePictureUrl
       })
     } else if (userData.role === 'eo') {
       this.user = 2
@@ -135,6 +165,7 @@ export default {
         headers : head
       }).then(res=>{
         this.data_eo = res.data.data
+        this.profilePic = this.data_eo.profilePictureUrl
       })
     } else if (userData.role === 'admin') {
       this.user = 3
@@ -142,6 +173,52 @@ export default {
   },
   fetchOnServer: false,
   methods: {
+    handleFileSelect(e) {
+      this.handleFiles(e.target.files);
+    },
+    async handleFiles(files) {
+        this.warning = ''
+        const allowedTypes = ['image/png', 'image/jpeg', 'image/gif'];
+        const maxFileSize = 10 * 1024 * 1024;
+        for (let i = 0; i < files.length; i++) {
+            if (!allowedTypes.includes(files[i].type)) {
+                this.newPhoto = null
+                this.warning = 'File type not supported. Please upload PNG, JPEG, or GIF files only.'
+                return
+            }
+            if (files[i].size > maxFileSize) {
+                this.newPhoto = null
+                this.warning = 'File size exceeds the limit. Please upload files up to 10 MB.'
+                return
+            }
+        }
+        // Sambungkan dengan backend dan taruh link gambar di eventPoster
+
+        try {
+            const formData = new FormData();
+            const userData = JSON.parse(localStorage.getItem('userData'));
+            const bearerToken = userData?.token;
+            formData.append('file', files[0]);
+
+            // Make the API request to upload the file
+            const response = await this.$axios.post('api/file', formData, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${bearerToken}`,
+                },
+            });
+
+            if (response.data.code === 201 && response.data.status === 'OK') {
+                const baseUrl = this.baseURL ?? 'http://localhost:5000'
+                this.profilePic = baseUrl + response.data.data.file.url;
+            } else {
+                alert('Failed to upload file. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error uploading file:', error);
+            alert('Error uploading file. Please try again.');
+        }
+    },
     goToEdit(){
       this.$router.push('/account/edit');
     },
@@ -149,16 +226,18 @@ export default {
       this.$router.push('/account');
     },
     async saveUpdate(){
+      const userData = JSON.parse(localStorage.getItem('userData'));
+      const bearerToken = userData?.token;
       if (this.user === 1) {
-        const userData = {
+        const formUserData = {
           "userId": this.account.userId,
           "name": this.account.name,
           "email": this.account.email,
-          "profilePictureUrl": "https://img.freepik.com/free-photo/painting-mountain-lake-with-mountain-background_188544-9126.jpg"
+          "profilePictureUrl": this.profilePic
         }
-        await this.$axios.put(`/api/profile/customer/update`,userData,{
+        await this.$axios.put(`/api/profile/customer/update`,formUserData,{
           headers: {
-          'Authorization': `Bearer ${this.account.token}`
+          'Authorization': `Bearer ${bearerToken}`
           }
         })
       } else if (this.user === 2){
@@ -170,11 +249,9 @@ export default {
           "description": this.data_eo.description,
           "industry": this.data_eo.industry,
           "contactNumber": this.data_eo.contactNumber,
-          "address": this.data_eo.description,
-          "profilePictureUrl": "https://img.freepik.com/free-photo/painting-mountain-lake-with-mountain-background_188544-9126.jpg"
+          "address": this.data_eo.address,
+          "profilePictureUrl": this.profilePic
         }
-        const userData = JSON.parse(localStorage.getItem('userData'));
-        const bearerToken = userData?.token;
         await this.$axios.put(`/api/profile/eo/update`,eoData,{
           headers: {
           'Authorization': `Bearer ${bearerToken}`
@@ -182,6 +259,22 @@ export default {
         })
       }
       this.$router.push('/account');
+      if (this.oldPassword !== '' && this.newPassword !== '' && this.confirmPassword !== '' && this.newPassword === this.confirmPassword) {
+        const newData = {
+          "userId" : userData.userId,
+          "oldPassword" : this.oldPassword,
+          "newPassword" : this.newPassword
+        }
+        await this.$axios.post(`/api/auth/change-password`,newData,{
+          headers: {
+          'Authorization': `Bearer ${bearerToken}`
+          }
+        }).then(res=>{
+          localStorage.removeItem('userData');
+          this.$router.push('/loginPage');
+          this.$emit('userLoggedOut');
+        })
+      }
     }
   },
 }

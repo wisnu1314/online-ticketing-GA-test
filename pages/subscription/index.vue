@@ -10,11 +10,10 @@
     </div>
     <div id="subs_field" class="d-flex subs mb-4 field">
       <div v-for="(pack, index) in packages" :key="index">
-        <div v-if="index%2 == 0" class="box_plan">
+        <div v-if="index%2 == 0" class="box_plan shadow p-4">
           <p class="title_plan">{{ pack.name }}</p>
           <div class="d-flex pricetag">
-            <p class="price">Rp{{ pack.price }}</p>
-            <!-- <p class="disc">-15%</p> -->
+            <p class="price">Rp{{ formatPrice(pack.price) }}</p>
           </div>
           <p class="target" style="font-size: 12px;">per {{pack.totalToken}}x prompt/akun</p>
           <p class="sz_14"><strong>{{pack.description}}</strong></p>
@@ -22,13 +21,12 @@
             <b-icon-check class="check_white"></b-icon-check>
             <p class="sz_14">Dapatkan {{pack.totalToken}}x auto-generate deskripsi event</p>
           </div>
-          <button class="button_white" @click="buySubscription(pack._id)">Beli</button>
+          <button class="button_white mt-4" @click="buySubscription(pack._id)">Beli</button>
         </div>
-        <div v-else class="box_plan box_green">
+        <div v-else class="box_plan box_green shadow p-4">
           <p class="title_plan">{{ pack.name }}</p>
           <div class="d-flex pricetag">
-            <p class="price">Rp{{ pack.price }}</p>
-            <!-- <p class="disc bg_green">-15%</p> -->
+            <p class="price">Rp{{ formatPrice(pack.price) }}</p>
           </div>
           <p class="target" style="font-size: 12px;">per {{pack.totalToken}}x prompt/akun</p>
           <p class="sz_14"><strong>{{pack.description}}</strong></p>
@@ -36,7 +34,7 @@
             <b-icon-check class="check_green"></b-icon-check>
             <p class="sz_14">Dapatkan {{pack.totalToken}}x auto-generate deskripsi event</p>
           </div>
-          <button class="button_white bg-white" @click="buySubscription(pack._id)">Beli</button>
+          <button class="button_white bg-white mt-4" @click="buySubscription(pack._id)">Beli</button>
         </div>
       </div>
     </div>
@@ -76,6 +74,9 @@ export default {
   },
   fetchOnServer: false,
   methods: {
+    formatPrice(price) {
+      return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    },
     buySubscription(subsId){
       const userData = JSON.parse(localStorage.getItem('userData'));
       const subs = {
@@ -98,7 +99,7 @@ export default {
 .jumbotron {
   background: linear-gradient(black, transparent), url('/subscription-bg.jpg');
   background-size: cover;
-  height: 100vh;
+  height: 92vh;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -144,22 +145,13 @@ export default {
 .price {
   font-size: 32px;
   font-weight: 600;
-  margin-top: -10px;
-}
-.disc {
-  font-size: 12px;
-  background-color: whitesmoke;
-  height: max-content;
-  padding: 2px;
+
 }
 .target {
-  margin-top: -15px;
+  margin-top: 15px;
 }
 .sz_14 {
   font-size: 14px;
-}
-.pricetag {
-  margin-top: -15px;
 }
 .box_plan {
   max-width: 270px;
