@@ -4,7 +4,7 @@
       <div class="text-white txt">
         <p class="h1">Hadiri event yang Anda Inginkan</p>
         <p style="font-size: large;">Platform tiket dan penemuan lengkap yang dipercaya oleh jutaan penyelenggara dan peserta di seluruh dunia</p>
-        <button class="btn">Daftar Sekarang</button>
+        <b-link href="/registerUserPage"><button class="btn">Daftar Sekarang</button></b-link>
       </div>
     </div>
     <div class=" lookfor_event justify-content-center my-5">
@@ -13,7 +13,7 @@
       </div>
       <div class="text_image mx-5">
         <p class="lookfor_event_text">Cari event yang sesuai dengan rencanamu!</p>
-        <button class="event_btn mt-3 py-2 px-4">Cari Event</button>
+        <b-link href="/events/list" ><button class="event_btn mt-3 py-2 px-4">Cari Event</button></b-link>
       </div>
     </div>
   </div>
@@ -34,7 +34,7 @@ export default {
 .jumbotron {
   background: linear-gradient(black, transparent),url('/landingjumbotron.png');
   background-size: cover;
-  height: 100vh;
+  height: 92vh;
   display: flex;
   flex-direction: row;
   align-items: center;
