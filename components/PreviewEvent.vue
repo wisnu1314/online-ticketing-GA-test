@@ -30,7 +30,7 @@
         </div>
         <h2>Lokasi</h2>
         <div class="ContentBox">
-          <b-icon-pin-map-fill/>
+          <b-icon-geo-alt/>
           <div>{{ formData.location }}</div>
         </div>
         <h2>Tentang event ini</h2>
@@ -39,14 +39,22 @@
           <div v-if="!isHTML">{{ formData.promotionalContent.description }}</div>
         </div>
         
-        
         <h2 v-if="formData.promotionalContent.tags.length">Tags</h2>
         <div v-if="formData.promotionalContent.tags.length" class="SelectedTags">
           <span v-for="(tag, index) in formData.promotionalContent.tags" :key="index" class="TagItem">{{ tag }}</span>
         </div>
-
-        <div>
-          
+        <p class="h5">Informasi Organizer</p>
+        <div class="infoOrganizer">
+          <div class="organizationBox">
+            <img :src="getOrganizerImageUrl()"/>
+            <div class="Organizer">
+              <ul>
+                <li class="organizerName">{{ eoData.name ?? '' }}</li>
+                <li class="organizerDetail">est. {{ eoData?.establishYear ?? '' }}</li>
+              </ul>
+            </div>
+          </div>
+          <p class="mt-3">{{ eoData?.description ?? '' }}</p>
         </div>
       </div>
     </div>
@@ -60,6 +68,10 @@
         type: Object,
         required: true,
       },
+      eoData:{
+        type: Object,
+        required: true,
+      }
     },
     computed: {
       formattedDate(){
@@ -101,6 +113,7 @@
         }
         return `Rp${minPrice} - Rp${maxPrice}`;
       },
+      
     },
     methods:{
       isHTML() {
@@ -113,10 +126,14 @@
         }
       },
       getImageUrl() {
-        
         return this.$props.formData.promotionalContent.posterImageUrl === '' ? 
           'https://img.freepik.com/free-photo/painting-mountain-lake-with-mountain-background_188544-9126.jpg' 
           :  `${this.$props.formData.promotionalContent.posterImageUrl}`;
+      },
+      getOrganizerImageUrl(){
+        return this.$props.eoData.profilePictureUrl === "" ? 
+          'https://iili.io/Jk1PRV4.jpg' 
+          :  `${this.$props.eoData.profilePictureUrl}`;
       },
       formatPrice(price) {
         return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -146,6 +163,7 @@
     border: solid #f2f0e9 1px;
     border-radius: 0.5rem;
     gap:0.5rem;
+    box-shadow: 7px 7px 7px 7px rgba(0, 0, 0, 0.116);
 }
 .PriceRangeContainer {
     display: flex;
@@ -192,6 +210,14 @@
 .DescriptionBox{
     width: 60%;
 }
+.organizationBox{
+  display: flex;
+  flex-direction: row;
+}
+.organizationBox img{
+  width:5rem;
+  height:5rem;
+}
 h1{
     font-size: 1.5rem;   
 }
@@ -215,6 +241,28 @@ h3{
     padding: 0.25rem 0.5rem;
     border-radius: 0.25rem;
     cursor: pointer;
+}
+.infoOrganizer {
+  background-color: #F1F5F9;
+  padding: 20px;
+  border-radius: 20px;
+  width:60%
+}
+
+.Organizer ul{
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  margin-left: 20px;
+}
+
+.organizerName {
+  font-weight: 700;
+}
+
+.organizerDetail {
+  font-size: small;
+  color: grey;
 }
   </style>
   

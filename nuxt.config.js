@@ -70,8 +70,8 @@ export default {
       });
       routes.push({
         name: 'edit-event',
-        path: '/events/:id/editEvent',
-        component: resolve(__dirname, 'pages/events/_id/editEvent.vue')
+        path: '/events/:id/edit',
+        component: resolve(__dirname, 'pages/events/_id/edit/editEvent.vue')
       });
     }
   }

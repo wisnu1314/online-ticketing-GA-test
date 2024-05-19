@@ -185,7 +185,7 @@ export default {
     checkSessionStorageUserData() {
       setInterval(() => {
         this.fetchUserData();
-      }, 2000); // Check every 30 seconds (adjust as needed)
+      }, 1000); // Check every 30 seconds (adjust as needed)
     },
     getImageUrl() {
         return this.profilePictureUrl === '' ? 
