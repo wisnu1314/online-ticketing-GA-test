@@ -1,7 +1,7 @@
 <template>
   <div class="card shadow">
     <div>
-      <img class="event_image" src="/foto-trainer.png">
+      <img class="event_image" :src="event.promotionalContent.posterImageUrl">
     </div>
     <div class="m-0 p-3">
       <p class="event_name"><strong>{{ event.eventTitle }}</strong></p>

@@ -7,7 +7,7 @@
         </div>
         <div class="col-sm-3">
           <button v-if="user == 1 || user == 2" class="btn_cancel">Cancel</button>
-          <button @click="saveUpdate()" v-if="user == 1 || user == 2" class="btn_save">Simpan</button>
+          <button v-if="user == 1 || user == 2" class="btn_save" @click.prevent="saveUpdate()">Simpan</button>
         </div>
       </div>
       <hr>
@@ -15,6 +15,7 @@
         <div class="row mt-4">
           <div class="col">
             <!-- Image -->
+            <img :src="account.profilePictureUrl"/>
             <button>Pilih Foto</button>
           </div>
           <div class="col">
@@ -48,7 +49,7 @@
         </div>
       </form>
       <form v-if="user == 2">
-        <div v-if="isEO" class="row mt-4">
+        <div class="row mt-4">
           <div class="col-3"></div>
           <div class="col-9">
             <div class="row col">
@@ -63,7 +64,7 @@
                 </div>
                 <div class="form-group">
                   <b>Tahun Berdiri</b>
-                  <input v-model=data_eo.year class='form-control'>
+                  <input v-model=data_eo.establishYear class='form-control'>
                 </div>
                 <div class="form-group">
                   <b>Industri</b>
@@ -85,7 +86,7 @@
                 </div>
                 <div>
                   <b>Nomor Telepon Organisasi </b>
-                  <input v-model="data_eo.phone" class='form-control'>
+                  <input v-model="data_eo.contactNumber" class='form-control'>
                 </div>
               </div>
             </div>
@@ -103,7 +104,6 @@
         </div>
       </form>
     </div>
-    {{ account }}
   </div>
 </template>
 
@@ -112,28 +112,31 @@ export default {
   data() {
     return {
       user: 0,
-      data_eo: {
-        'name': 'OSIS SMAN 8 BDG',
-        'email': 'osissman8bdg@gmail.com',
-        'year': '1968',
-        'industry': 'Musik, Seni Pertunjukan',
-        'phone': '0812345678',
-        'address': 'Jl. Solontongan No.3, Kelurahan Turangga, Kecamatan Lengkong, Kota Bandung, Jawa Barat',
-        'description': 'SMA Negeri 8 Bandung, merupakan salah satu Sekolah Menengah Atas Negeri di Kota Bandung, beralamat di Jl. Solontongan No.3, Kelurahan Turangga, Kecamatan Lengkong, Kota Bandung, Jawa Barat',
-        'oldpassword':'',
-        'newpassword':'',
-        'confirmpassword':''
-      },
+      account: [],
+      data_eo: []
     }
   },
-  fetch(){
+  async fetch(){
     const userData = JSON.parse(localStorage.getItem('userData'));
-    this.account = userData
-    if (this.account.role === 'customer') {
+    const bearerToken = userData?.token;
+    const head= {
+      'Authorization': `Bearer ${bearerToken}`
+    }
+    if (userData.role === 'customer') {
       this.user = 1
-    } else if (this.account.role === 'eo') {
+      await this.$axios(`/api/profile/${userData.userId}`,{
+        headers : head
+      }).then(res =>{
+        this.account = res.data.data
+      })
+    } else if (userData.role === 'eo') {
       this.user = 2
-    } else if (this.account.role === 'admin') {
+      await this.$axios(`/api/profile/eo/${userData.userId}`,{
+        headers : head
+      }).then(res=>{
+        this.data_eo = res.data.data
+      })
+    } else if (userData.role === 'admin') {
       this.user = 3
     }
   },
@@ -142,27 +145,28 @@ export default {
     goToEdit(){
       this.$router.push('/account/edit');
     },
-    saveUpdate(){
-      const user = {
+    async saveUpdate(){
+      const userData = {
           "userId": this.account.userId,
           "name": this.account.name,
           "email": this.account.email,
-          "profilePictureUrl": "http://google.com"
+          "profilePictureUrl": "https://img.freepik.com/free-photo/painting-mountain-lake-with-mountain-background_188544-9126.jpg"
       }
-      if (user === 1) {
-        this.$axios.put(`/api/profile/customer/update`,user,{
+      if (this.user === 1) {
+        await this.$axios.put(`/api/profile/customer/update`,userData,{
           headers: {
           'Authorization': `Bearer ${this.account.token}`
           }
         })
-      } else if (user === 2){
-        this.$axios.put(`/api/profile/eo/update`,user,{
+        window.location.reload()
+      } else if (this.user === 2){
+        await this.$axios.put(`/api/profile/eo/update`,userData,{
           headers: {
           'Authorization': `Bearer ${this.account.token}`
           }
         })
+        window.location.reload()
       }
-
     }
   },
 }

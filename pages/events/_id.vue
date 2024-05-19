@@ -1,6 +1,6 @@
 <template>
   <div class="event">
-    <img src="/landingjumbotron.png" style="width:100%; max-height: 45vh;"/>
+    <img :src="promotionalContent.posterImageUrl" style="width:100%; max-height: 45vh;"/>
     <p class="mt-4"><strong>{{formattedDate}}</strong></p>
     <div class="d-flex event_desc">
       <div class="col_desc">
@@ -82,7 +82,7 @@
                     <p><strong>Rp {{ formatPrice(detail.reduce((accum,item) => accum + item.totalPrice, 0)) }}</strong></p>
                   </b-col>
                 </b-row>
-                <b-button v-if="user==1" @click="submitOrder()">Pesan</b-button>
+                <b-button v-if="user==1 || user==0" @click="submitOrder()">Pesan</b-button>
               </b-col>
             </b-row>
           </b-modal>
@@ -144,20 +144,7 @@ export default {
     }
   },
   async fetch(){
-    const userData = JSON.parse(localStorage.getItem('userData'));
-    if (userData.role === 'customer') {
-        this.user = 1
-      } else if (userData.role === 'eo') {
-        this.user = 2
-      } else if (userData.role === 'admin') {
-        this.user = 3
-      }
-    const bearerToken = userData?.token;
-    await this.$axios(`/api/events/${this.$route.params.id}`,{
-      headers: {
-        'Authorization': `Bearer ${bearerToken}`
-      }
-    })
+    await this.$axios(`/api/events/${this.$route.params.id}`)
     .then(res => {
       this.dataAll = res.data.data
       this.events = Object.freeze(res.data.data.event)
@@ -175,6 +162,17 @@ export default {
         det.totalPrice = det.pricePerTicket * det.totalTickets
       })
     })
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    if (!isNaN(userData)) {
+      if (userData.role === 'customer') {
+        this.user = 1
+      } else if (userData.role === 'eo') {
+        this.user = 2
+      } else if (userData.role === 'admin') {
+        this.user = 3
+      }
+    }
+    // const bearerToken = userData?.token;
   },
   fetchOnServer: false,
   computed: {
@@ -223,7 +221,11 @@ export default {
         return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       },
     async submitOrder(){
-      const userData = JSON.parse(localStorage.getItem('userData'));
+      if (this.user === 0) {
+        this.$router.push('/loginPage');
+      }
+      else {
+        const userData = JSON.parse(localStorage.getItem('userData'));
       const bearerToken = userData?.token;
       this.detail.forEach(det=>{
         if (det.totalTickets > 0) {
@@ -241,6 +243,7 @@ export default {
       })
       // this.$refs['modal-buy'].hide()
       this.$refs['modal-sukses'].show()
+      }
     },
     async deleteEvent(){
       const userData = JSON.parse(localStorage.getItem('userData'));
