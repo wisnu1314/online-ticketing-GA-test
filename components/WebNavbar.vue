@@ -155,10 +155,12 @@ export default {
       }
     },
     navigateToProfile() {
+      this.toggleDropdown();
       this.$router.push('/account');
       // To be implemented
     },
     navigateToSubscription() {
+      this.toggleDropdown();
       this.$router.push('/subscription');
       // To be implemented
     },

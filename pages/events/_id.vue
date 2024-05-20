@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
   <div class="event">
     <img :src="promotionalContent.posterImageUrl" style="width:100%; max-height: 45vh;"/>
@@ -8,9 +9,9 @@
           <p class="title">{{events.eventTitle}}</p>
           <p><strong>{{events.subTitle }}</strong></p>
         </div>
-        <div>
+        <div class="ByImage">
           <!-- image -->
-          <img src="/sman8.png"/>
+          <img :src="getOrganizerImage()"/>
           <span style="color: grey;">By {{ dataAll.ownerName }}</span>
         </div>
         <p class="h5">Tanggal dan Waktu</p>
@@ -24,9 +25,8 @@
           <span class="ml-2">{{ events.location }}</span>
         </div>
         <p class="h5">Tentang event ini</p>
-        <p>
-          {{ promotionalContent.description }}
-        </p>
+        <div v-if="isHTML(promotionalContent.description)"  v-html="sanitizeHTML(promotionalContent.description)"></div>
+        <div v-if="!isHTML(promotionalContent.description)">{{ promotionalContent.description }}</div>
         <p class="h5">Tags</p>
         <div class="d-flex">
           <button v-for="(tag, index) in promotionalContent.tags" :key="index" class="mr-3 btn_tags"> {{ tag }}</button>
@@ -34,7 +34,7 @@
         <p class="h5">Informasi Organizer</p>
         <div class="info_org">
           <div class="d-flex">
-            <img src="/sman8.png"/>
+            <img :src="getOrganizerImage()"/>
             <div class="org">
               <ul>
                 <li class="org_name">{{ dataAll.ownerName }}</li>
@@ -70,7 +70,7 @@
                 </div>
               </b-col>
               <b-col sm="5">
-                <img :src="promotionalContent.posterImageUrl" style="max-width: 100%;"/>
+                <img :src="getOrganizerImage()" style="max-width: 100%;"/>
                 <p><strong>Detail Pembayaran</strong></p>
                 <b-row v-for="(det,index) in detail" :key="index">
                   <b-col sm="6">
@@ -136,6 +136,7 @@
 </template>
 
 <script>
+ import DOMPurify from 'dompurify';
 export default {
   layout: 'default',
   data() {
@@ -148,10 +149,12 @@ export default {
       organizer: [],
       detail: [],
       submitDetail: [],
-      userData: []
+      userData: [],
+      eoProfilePictureUrl:''
     }
   },
   async fetch(){
+    const userData = JSON.parse(localStorage.getItem('userData'));
     await this.$axios(`/api/events/${this.$route.params.id}`)
     .then(res => {
       this.dataAll = res.data.data
@@ -170,7 +173,6 @@ export default {
         det.totalPrice = det.pricePerTicket * det.totalTickets
       })
     })
-    const userData = JSON.parse(localStorage.getItem('userData'));
     this.userData = userData
     if (userData.role === 'customer') {
       this.user = 1
@@ -266,6 +268,24 @@ export default {
     },
     refreshPage(){
       window.location.reload()
+    },
+    isHTML(txt) {
+      // Check if description contains HTML tags
+      const containsHTML = /<[a-z][\s\S]*>/i.test(txt);
+      if (containsHTML) {
+        return true
+      } else {
+          return false
+      }
+    },
+    sanitizeHTML(html){
+        return DOMPurify.sanitize(html);
+      },
+    getOrganizerImage(){
+    console.log(this.dataAll)
+      return this.dataAll.eoProfilePicture === '' ?
+        'https://iili.io/Jk1PRV4.jpg'
+          : this.dataAll.eoProfilePicture
     }
   },
 }
@@ -278,7 +298,14 @@ export default {
   padding-bottom: 30px;
   padding-top: 30px;
 }
-
+.d-flex img{
+  width:5rem;
+  height:5rem;
+}
+.ByImage img{
+  width: 2.5rem;
+  height:2.5rem;
+}
 .event p {
   text-align: justify;
 }

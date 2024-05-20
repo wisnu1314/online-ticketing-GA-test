@@ -35,7 +35,7 @@
         </div>
         <h2>Tentang event ini</h2>
         <div class="DescriptionBox">
-          <div v-if="isHTML" v-html="formData.promotionalContent.description"></div>
+          <div v-if="isHTML" v-html="sanitizeHTML(formData.promotionalContent.description)"></div>
           <div v-if="!isHTML">{{ formData.promotionalContent.description }}</div>
         </div>
         
@@ -61,6 +61,7 @@
   </template>
   
   <script>
+  import DOMPurify from 'dompurify';
   export default {
     name: 'PreviewEvent',
     props: {
@@ -138,6 +139,9 @@
       formatPrice(price) {
         return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       },
+      sanitizeHTML(html){
+        return DOMPurify.sanitize(html);
+      }
     },
   };
   </script>
