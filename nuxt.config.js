@@ -56,12 +56,12 @@ export default {
   build: {},
   publicRuntimeConfig: {
     axios: {
-      baseURL: process.env.BASE_URL || 'http://localhost:8080/'
+      baseURL: process.env.BASE_URL || 'http://localhost:5000/'
     },
   },
   privateRuntimeConfig: {
     axios: {
-      baseURL: process.env.BASE_URL || 'http://localhost:8080/'
+      baseURL: process.env.BASE_URL || 'http://localhost:5000/'
     }
   },
 
