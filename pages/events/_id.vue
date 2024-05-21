@@ -70,7 +70,7 @@
                 </div>
               </b-col>
               <b-col sm="5">
-                <img :src="getOrganizerImage()" style="max-width: 100%;"/>
+                <img :src="promotionalContent.posterImageUrl" style="max-width: 100%;"/>
                 <p><strong>Detail Pembayaran</strong></p>
                 <b-row v-for="(det,index) in detail" :key="index">
                   <b-col sm="6">

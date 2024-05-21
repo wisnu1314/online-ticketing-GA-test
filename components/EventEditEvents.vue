@@ -52,9 +52,9 @@
                         <b-form-group label="Harga per Tiket">
                             <b-form-input v-model="ticketCategory.pricePerTicket" type="number" min=0 required/>
                         </b-form-group>
-                        
+
                     </div>
-                    <div class="RemoveButtonContainer"> 
+                    <div class="RemoveButtonContainer">
                         <button v-if="index !== 0" class="RemoveButton" @click="removeTicketCategory(index)">-</button>
                         <button v-if="index == 0" class="Unclickable" @click="removeTicketCategory(index)">-</button>
                     </div>
@@ -85,7 +85,7 @@
                                     style="display: none"
                                     @change="handleFileSelect"
                                 />
-                                
+
                             </div>
                             <div v-if="!uploadedFile && editeventform.promotionalContent.posterImageUrl" class="UploadedFile">
                                 <img :src="fileBeforeEdit" alt="Uploaded Image" style="max-width: 200px;">
@@ -136,19 +136,19 @@
                 <div id="BackButtonContainer">
                     <b-button class="BackButton" @click="togglePreview">Kembali</b-button>
                 </div>
-                
+
             </div>
             <div class="FormEditBox">
                 <PreviewEvent :form-data="editeventform" :eo-data="eoData"/>
             </div>
-            
+
         </div>
     </div>
-    
+
 </template>
 <script>
 import Vue from 'vue';
-import wysiwyg from "vue-wysiwyg"; 
+import wysiwyg from "vue-wysiwyg";
 import "vue-wysiwyg/dist/vueWysiwyg.css";
 import PreviewEvent from "./PreviewEvent.vue"
 
@@ -157,7 +157,7 @@ Vue.use(wysiwyg, {
     forcePlainTextOnPaste: true,
     maxHeight: "30rem",
 });
-  
+
 
 export default {
     name: 'EventEditEvents',
@@ -200,7 +200,7 @@ export default {
             return this.editeventform.description;
         },
         remainingChances() {
-            
+
             return this.chances;
         }
     },
@@ -216,10 +216,10 @@ export default {
         this.loadEventData()
         this.loadEOData();
         this.loadGPTTokenData()
-        
+
     },
     created() {
-        
+
         if(this.$config.axios.baseURL.endsWith('/')){
             this.baseURL = this.$config.axios.baseURL.substring(0, this.$config.axios.baseURL.length - 1);
         }
@@ -349,7 +349,7 @@ export default {
                     alert("Kesempatan habis")
                 }
                 else{
-                    
+
                     const response = await this.$axios.post('api/generate-description', { text: pureText }, {
                         headers: {
                             'Authorization': `Bearer ${bearerToken}`,
@@ -362,15 +362,15 @@ export default {
                         // Update local storage data
                         userData.gptAccessTokenQuota = this.chances;
                         localStorage.setItem('userData', JSON.stringify(userData));
-                        
+
                     }
-                    
+
                 }
             } catch (error) {
                 console.error('Error:', error);
                 alert('Error generating content. Please try again.');
             }
-            
+
         },
         handleDrop(e) {
             this.handleFiles(e.dataTransfer.files);
@@ -381,7 +381,7 @@ export default {
         // async if the API integrated
         async handleFiles(files) {
             const allowedTypes = ['image/png', 'image/jpeg', 'image/gif'];
-            const maxFileSize = 10 * 1024 * 1024; 
+            const maxFileSize = 10 * 1024 * 1024;
             for (let i = 0; i < files.length; i++) {
                 if (!allowedTypes.includes(files[i].type)) {
                     alert('File type not supported. Please upload PNG, JPEG, or GIF files only.');
@@ -393,7 +393,7 @@ export default {
                 }
             }
             // Sambungkan dengan backend dan taruh link gambar di eventPoster
-            
+
             try {
                 const formData = new FormData();
                 const userData = JSON.parse(localStorage.getItem('userData'));
@@ -408,10 +408,10 @@ export default {
                     },
                 });
 
-                
+
                 if (response.data.code === 201 && response.data.status === 'OK') {
                     const baseUrl = this.baseURL ?? 'http://localhost:5000'
-                    
+
                     this.editeventform.promotionalContent.posterImageUrl = baseUrl + response.data.data.file.url;
                     if (files.length > 0) {
                         this.uploadedFile = files[0];
@@ -439,10 +439,10 @@ export default {
             }
         },
         togglePreview(){
-            
+
             this.showForm = !this.showForm
             this.$emit('preview-event', this.editeventform);
-            
+
         },
         isHTML(txt) {
       // Check if description contains HTML tags
@@ -463,6 +463,8 @@ export default {
             const userData = JSON.parse(localStorage.getItem('userData'));
             const bearerToken = userData?.token;
             const eventId = this.$route.params.id
+            this.editeventform.startDate = this.editeventform.startDate+"+07:00";
+            this.editeventform.endDate = this.editeventform.endDate+"+07:00";
             try{
                 const response = await this.$axios.put(`api/events/${eventId}`, this.editeventform, {
                     headers: {
@@ -474,7 +476,7 @@ export default {
                     alert(`${response.data.message}`);
                     this.$router.push('/myevents/list')
                 }
-                
+
             } catch (error){
                 console.log('EditEvent', error);
             }
@@ -482,7 +484,7 @@ export default {
         Cancel(){
             this.$router.push('/myevents/list');
         }
-        
+
     },
   }
 </script>
@@ -497,7 +499,7 @@ export default {
 }
 .FormEditBox{
     width: 90%;
-    max-width: 70rem; 
+    max-width: 70rem;
     margin: 0 auto;
     overflow-y: auto;
     background-color: white;
@@ -509,7 +511,7 @@ export default {
 }
 .PreviewEditBox{
     width: 85%;
-    max-width: 67.5rem; 
+    max-width: 67.5rem;
     margin: 0 auto;
     overflow-y: auto;
     background-color: white;
@@ -526,7 +528,7 @@ export default {
     border-radius: 0.25rem;
 }
 h1{
-    font-size: 1.5rem;   
+    font-size: 1.5rem;
 }
 h2{
     font-size: 1.25rem;
@@ -581,10 +583,10 @@ h3{
 }
 .BottomButtons {
     display: flex;
-    justify-content: flex-end; 
+    justify-content: flex-end;
     margin-top: 0.5rem;;
     width: 85%;
-    max-width: 70rem; 
+    max-width: 70rem;
     margin: 0 auto;
     padding-right: 1.25rem;
     align-items: center;
@@ -612,7 +614,7 @@ h3{
 }
 .RemainingChances {
     display: flex;
-    align-items: center; 
+    align-items: center;
 }
 .FileUpload {
   width: 100%;
@@ -663,11 +665,11 @@ h3{
 }
 #BackButtonContainer{
     display: flex;
-    justify-content: flex-end; 
+    justify-content: flex-end;
     margin-top: 0.5rem;
     width:100%;
-    max-width: 67.5rem; 
+    max-width: 67.5rem;
     margin: 0 auto;
-    
+
 }
 </style>
