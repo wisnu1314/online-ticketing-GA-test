@@ -414,10 +414,22 @@ export default {
         async createEvent(){
             const userData = JSON.parse(localStorage.getItem('userData'));
             const bearerToken = userData?.token;
-            this.eventform.startDate = this.eventform.startDate+"+07:00";
-            this.eventform.endDate = this.eventform.endDate+"+07:00";
+            const utcStart = new Date(this.eventform.startDate + 'Z')
+            const localStart = new Date(utcStart.getTime() + (new Date(utcStart).getTimezoneOffset() * 60000));
+            const formattedLocalStart = localStart.toISOString().slice(0, 16) + 'Z';
+            const utcEnd = new Date(this.eventform.endDate + 'Z')
+            const localEnd = new Date(utcEnd.getTime() + (new Date(utcEnd).getTimezoneOffset() * 60000));
+            const formattedLocalEnd = localEnd.toISOString().slice(0, 16) + 'Z'; 
+            console.log('time', formattedLocalStart, formattedLocalEnd)
+            
+            const {startDate, endDate, ...filtered} = this.eventform
+            const body = {
+                ...filtered,
+                startDate:formattedLocalStart,
+                endDate: formattedLocalEnd
+            }
             try{
-                const response = await this.$axios.post('api/events', this.eventform, {
+                const response = await this.$axios.post('api/events', body, {
                     headers: {
                             'Authorization': `Bearer ${bearerToken}`,
                         },

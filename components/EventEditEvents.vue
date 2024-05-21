@@ -318,7 +318,7 @@ export default {
             }
         },
         addTicketCategory() {
-           console.log('check',this.baseURL)
+          
             this.editeventform.tickets.push({
                 categoryName:'Nama Tiket',
                 totalTickets:1,
@@ -439,10 +439,8 @@ export default {
             }
         },
         togglePreview(){
-
             this.showForm = !this.showForm
             this.$emit('preview-event', this.editeventform);
-
         },
         isHTML(txt) {
       // Check if description contains HTML tags
@@ -463,10 +461,22 @@ export default {
             const userData = JSON.parse(localStorage.getItem('userData'));
             const bearerToken = userData?.token;
             const eventId = this.$route.params.id
-            this.editeventform.startDate = this.editeventform.startDate+"+07:00";
-            this.editeventform.endDate = this.editeventform.endDate+"+07:00";
+            const utcStart = new Date(this.editeventform.startDate + 'Z')
+            const localStart = new Date(utcStart.getTime() + (new Date(utcStart).getTimezoneOffset() * 60000));
+            const formattedLocalStart = localStart.toISOString().slice(0, 16) + 'Z';
+            const utcEnd = new Date(this.editeventform.endDate + 'Z')
+            const localEnd = new Date(utcEnd.getTime() + (new Date(utcEnd).getTimezoneOffset() * 60000));
+            const formattedLocalEnd = localEnd.toISOString().slice(0, 16) + 'Z'; 
+            // console.log('time', formattedLocalStart, formattedLocalEnd)
+            
+            const {startDate, endDate, ...filtered} = this.editeventform
+            const body = {
+                ...filtered,
+                startDate:formattedLocalStart,
+                endDate: formattedLocalEnd
+            }
             try{
-                const response = await this.$axios.put(`api/events/${eventId}`, this.editeventform, {
+                const response = await this.$axios.put(`api/events/${eventId}`, body, {
                     headers: {
                             'Authorization': `Bearer ${bearerToken}`,
                         },
