@@ -22,11 +22,11 @@
 <script>
 export default {
   layout: 'default',
-  mounted(){
-    this.$gtag.pageview(
-      this.$route
-    )
-  }
+  // mounted(){
+  //   this.$gtag.pageview(
+  //     this.$route
+  //   )
+  // }
 }
 </script>
 
