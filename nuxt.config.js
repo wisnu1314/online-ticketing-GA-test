@@ -58,7 +58,7 @@ export default {
     axios: {
       baseURL: process.env.BASE_URL || 'http://localhost:8080/'
     },
-    GA_ID: 'G-883Z07YHRP'
+    GA_ID: process.env.GA_ID
   },
   privateRuntimeConfig: {
     axios: {
