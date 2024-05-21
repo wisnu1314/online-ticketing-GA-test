@@ -106,6 +106,11 @@ export default {
         const totalToken = this.packages.find((p) => p._id === subsId).totalToken
         userData.gptAccessTokenQuota = userData.gptAccessTokenQuota + totalToken
         localStorage.setItem('userData', JSON.stringify(userData))
+        this.$gtag.event('success_subscription_purchase', {
+          event_category: 'Subscription',
+          event_label: 'Success Subscription Purchase',
+          value: 1
+        });
         this.$refs['modal-sukses'].show()
       })
     }

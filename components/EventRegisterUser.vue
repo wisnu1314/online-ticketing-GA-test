@@ -84,10 +84,20 @@
         }
         console.log(body)
         const response = await this.$axios.post('/api/auth/register',body);
-        const userData = response.data;
-        // localStorage.setItem('userData', JSON.stringify(userData));
-        this.$emit('userRegistered', userData);
-        this.$router.push('/loginPage');
+        if(response.data.code === 200 && response.data.status ==='OK'){
+          this.$gtag.event('success_user_register', {
+            event_category: 'Register User',
+            event_label: 'Success User Register',
+            value: 1
+          });
+          const userData = response.data;
+          // localStorage.setItem('userData', JSON.stringify(userData));
+          this.$emit('userRegistered', userData);
+          this.$router.push('/loginPage');
+        }
+        else{
+          alert(`${response.data.message}`);
+        }
       } catch (error) {
           console.error('Login error:', error);
           if (error.response) {

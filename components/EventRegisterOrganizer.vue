@@ -168,10 +168,21 @@ export default {
         }
         console.log(body)
         const response = await this.$axios.post('/api/auth/register/eo',body);
-        const userData = response.data;
-        // localStorage.setItem('userData', JSON.stringify(userData));
-        this.$emit('userRegisteredEO', userData);
-        this.$router.push('/loginPage');
+        if(response.data.code === 200 && response.data.status ==='OK'){
+          this.$gtag.event('success_org_register', {
+            event_category: 'Register Organization',
+            event_label: 'Success Organization Register',
+            value: 1
+          });
+          const userData = response.data;
+          // localStorage.setItem('userData', JSON.stringify(userData));
+          this.$emit('userRegisteredEO', userData);
+          this.$router.push('/loginPage');
+        }
+        else{
+          alert(`${response.data.message}`);
+        }
+        
       } catch (error) {
           console.error('Login error:', error);
           if (error.response) {

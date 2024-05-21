@@ -91,6 +91,11 @@ export default {
   watch: {
     '$route.query': '$fetch'
   },
+  mounted(){
+    this.$gtag.pageview(
+      this.$route
+    )
+  },
   methods: {
     changePage(index){
       const curentQuery = this.$route.query

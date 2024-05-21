@@ -250,6 +250,14 @@ export default {
         headers: {
         'Authorization': `Bearer ${bearerToken}`
         }
+      }).then(res=>{
+          if(res.data.code === 200 && res.data.status === 'OK'){
+            this.$gtag.event('success_ticket_purchase', {
+              event_category: 'Ticket',
+              event_label: 'Success Ticket Purchase',
+              value: 1
+            });
+          }  
       })
       this.$refs['modal-sukses'].show()
       }

@@ -77,13 +77,24 @@ export default {
         console.log(body)
         const response = await this.$axios.post('/api/auth/login',body);
         // const response = await this.$axios.get('/api/health');
-        const userData = response.data;
-        const userDataToStore = Object.fromEntries(
-        Object.entries(userData.data).filter(([key]) => key !== 'password'));
-        localStorage.setItem('userData', JSON.stringify(userDataToStore));
-        this.$emit('userLoggedIn', userData);
-        // window.location.href = '/home';
-        this.$router.push('/home');
+        if(response.data.code === 200 && response.data.status ==='OK'){
+          this.$gtag.event('success_login', {
+            event_category: 'Login',
+            event_label: 'Success Login',
+            value: 1
+          });
+          const userData = response.data;
+          const userDataToStore = Object.fromEntries(
+          Object.entries(userData.data).filter(([key]) => key !== 'password'));
+          localStorage.setItem('userData', JSON.stringify(userDataToStore));
+          this.$emit('userLoggedIn', userData);
+          // window.location.href = '/home';
+          this.$router.push('/home');
+        }
+        else{
+          alert(`${response.data.message}`);
+        }
+        
       } catch (error) {
           console.error('Login error:', error);
           if (error.response) {

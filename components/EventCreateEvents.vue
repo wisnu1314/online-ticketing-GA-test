@@ -436,7 +436,13 @@ export default {
                 })
 
                 if (response.data.code === 201 && response.data.status === 'OK') {
+                    this.$gtag.event('success_event_creation', {
+                        event_category: 'Create Event',
+                        event_label: 'Success Event Creation',
+                        value: 1
+                    });
                     alert(`${response.data.message}`);
+                    
                     this.$router.push('/myevents/list')
                 }
 
