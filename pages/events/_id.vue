@@ -132,7 +132,6 @@
         </div>
       </div>
     </div>
-  
 </template>
 
 <script>
@@ -258,13 +257,13 @@ export default {
     async deleteEvent(){
       const userData = JSON.parse(localStorage.getItem('userData'));
       const bearerToken = userData?.token;
-      const response = await this.$axios.delete(`/api/events/${this.$route.params.id}`,{
+      await this.$axios.delete(`/api/events/${this.$route.params.id}`,{
         headers: {
         'Authorization': `Bearer ${bearerToken}`
         }
+      }).then(res=>{
+        this.$router.push('/myevents/list')
       })
-      this.$refs['my-modal'].hide()
-      alert(response)
     },
     refreshPage(){
       window.location.reload()
