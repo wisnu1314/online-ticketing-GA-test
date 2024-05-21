@@ -315,7 +315,11 @@ export default {
                         // Update local storage data
                         userData.gptAccessTokenQuota = this.chances;
                         localStorage.setItem('userData', JSON.stringify(userData));
-
+                        this.$gtag.event('success_autogenerate', {
+                            event_category: 'GPT Autogenerate',
+                            event_label: 'Success Autogenerate',
+                            value: 1
+                        });
                     }
 
                 }
