@@ -20,7 +20,8 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     { src: '~/plugins/vue-easytable.js', ssr: false },
-    { src: '~/plugins/fontawesome.js', ssr: false }
+    { src: '~/plugins/fontawesome.js', ssr: false },
+    { src: '~/plugins/vue-gtag.js', ssr: false }, 
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -56,7 +57,8 @@ export default {
   publicRuntimeConfig: {
     axios: {
       baseURL: process.env.BASE_URL || 'http://localhost:8080/'
-    }
+    },
+    GA_ID: 'G-883Z07YHRP'
   },
   privateRuntimeConfig: {
     axios: {
