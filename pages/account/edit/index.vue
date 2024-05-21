@@ -142,7 +142,8 @@ export default {
       warning:"",
       oldPassword : '',
       newPassword : '',
-      confirmPassword : ''
+      confirmPassword : '',
+      baseURL:'',
     }
   },
   async fetch(){
@@ -171,6 +172,14 @@ export default {
       this.user = 3
     }
   },
+  created() {
+        if(this.$config.axios.baseURL.endsWith('/')){
+            this.baseURL = this.$config.axios.baseURL.substring(0, this.$config.axios.baseURL.length - 1);
+        }
+        else{
+            this.baseURL = this.$config.axios.baseURL;
+        }
+    },
   fetchOnServer: false,
   methods: {
     handleFileSelect(e) {
@@ -209,7 +218,7 @@ export default {
             });
 
             if (response.data.code === 201 && response.data.status === 'OK') {
-                const baseUrl = this.baseURL ?? 'http://localhost:5000'
+                const baseUrl = this.baseURL ?? 'https://api.ippl.michaelpege.site/'
                 this.profilePic = baseUrl + response.data.data.file.url;
             } else {
                 alert('Failed to upload file. Please try again.');
