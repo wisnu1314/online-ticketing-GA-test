@@ -27,8 +27,8 @@
         <p class="h5">Tentang event ini</p>
         <div v-if="isHTML(promotionalContent.description)"  v-html="sanitizeHTML(promotionalContent.description)"></div>
         <div v-if="!isHTML(promotionalContent.description)">{{ promotionalContent.description }}</div>
-        <p v-if="promotionalContent?.tags.length !== 0" class="h5">Tags</p>
-        <div class="d-flex">
+        <p v-if="promotionalContent && promotionalContent.tags && promotionalContent.tags.length !== 0" class="h5">Tags</p>
+        <div v-if="promotionalContent && promotionalContent.tags && promotionalContent.tags.length !== 0" class="d-flex">
           <button v-for="(tag, index) in promotionalContent.tags" :key="index" class="mr-3 btn_tags"> {{ tag }}</button>
         </div>
         <p class="h5">Informasi Organizer</p>
