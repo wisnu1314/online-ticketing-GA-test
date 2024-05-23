@@ -70,6 +70,7 @@ export default {
     const limit = this.$route.query.limit || 10
     const page = this.$route.query.page || 1
     const location = this.$route.query.location || null
+    const search = this.$route.query.search || null
     const dateStart = this.$route.query.startDate || new Date().toISOString()
     const dateEnd = this.$route.query.endDate || null
     console.log(dateStart);
@@ -80,6 +81,9 @@ export default {
     }
     if (dateEnd) {
       apiUrl += `&startDate=${dateStart}&endDate=${dateEnd}`
+    }
+    if (search) {
+      apiUrl += `&searchByEventTitle=${search}`
     }
     await this.$axios(apiUrl)
     .then(res=>{

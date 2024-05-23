@@ -9,6 +9,7 @@
           type="text"
           class="SearchBar"
           @input="updateSearchQuery"
+          @keyup.enter="enterSearch()"
         />
       </b-input-group>
     </b-form-group>
@@ -196,6 +197,9 @@ export default {
           'https://iili.io/Jk1PRV4.jpg'
           :  `${this.profilePictureUrl}`;
       },
+    enterSearch(){
+      this.$router.push(`/events/list?search=${this.searchInput}`)
+    }
   },
 };
 </script>
