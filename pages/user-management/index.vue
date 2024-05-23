@@ -154,7 +154,9 @@
       }
       })
       .then(res=>{
-        alert(res.data.data)
+        
+        alert('Account Deleted')
+        window.location.reload()
       })
     },
     changeStatus(rowIndex){

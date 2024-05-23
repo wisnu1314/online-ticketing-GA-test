@@ -56,7 +56,7 @@
                     </div>
                     <div class="RemoveButtonContainer">
                         <button v-if="index !== 0" class="RemoveButton" @click="removeTicketCategory(index)">-</button>
-                        <button v-if="index == 0" class="Unclickable" @click="removeTicketCategory(index)">-</button>
+                        <button v-if="index === 0" class="Unclickable" @click="removeTicketCategory(index)">-</button>
                     </div>
                 </div>
                 <b-button id="AddCategoryButton" @click="addTicketCategory">Tambah Kategori Tiket</b-button>
